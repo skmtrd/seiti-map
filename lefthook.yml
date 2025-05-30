@@ -1,0 +1,28 @@
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      glob: "*.{js,jsx,ts,tsx,json,css}"
+      run: npx biome check --write {staged_files}
+      stage_fixed: true
+    type-check:
+      glob: "*.{ts,tsx}"
+      run: npm run type-check
+
+pre-push:
+  commands:
+    audit:
+      run: npm audit --audit-level moderate
+
+commit-msg:
+  commands:
+    format-check:
+      run: |
+        if ! grep -qE "^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .+" "$1"; then
+          echo "Commit message format is invalid. Please use conventional commits format."
+          echo "Examples:"
+          echo "  feat: add new feature"
+          echo "  fix(component): resolve issue with button"
+          echo "  docs: update README"
+          exit 1
+        fi 
