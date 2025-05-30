@@ -9,7 +9,9 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "ui:init": "npx shadcn-ui@latest init",
+    "ui:add": "npx shadcn-ui@latest add"
   },
   "dependencies": {
     "next": "15.3.3",
