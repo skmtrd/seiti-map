@@ -104,12 +104,6 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
               )}
 
               <div className="flex items-center gap-2 mb-2">
-                <Badge
-                  variant="secondary"
-                  className={`${getDifficultyBadgeColor(selectedSpot.difficulty_level)} font-medium text-xs`}
-                >
-                  {getDifficultyLabel(selectedSpot.difficulty_level)}
-                </Badge>
                 <span className="text-xs text-gray-500">
                   {selectedSpot.prefecture} {selectedSpot.city}
                 </span>
@@ -144,10 +138,6 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
               <p className="text-blue-700 text-sm">{selectedSpot.visit_tips}</p>
             </div>
           )}
-          <div className="flex items-center justify-between mt-4 text-xs text-gray-500">
-            <span>緯度: {selectedSpot.latitude.toFixed(6)}</span>
-            <span>経度: {selectedSpot.longitude.toFixed(6)}</span>
-          </div>
         </CardContent>
       </Card>
     </Popup>

@@ -1,10 +1,11 @@
 import { getSpots } from "@/app/actions/spot";
 import RootPage from "@/components/root/RootPage";
 
-const Page = async () => {
+const Page = () => {
   // const spots = await getSpots();
   // console.log(spots);
   return <RootPage />;
+  // return <div>Hello</div>;
 };
 
 export default Page;
