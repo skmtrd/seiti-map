@@ -23,13 +23,6 @@ const ADDRESS_PATTERNS = [
   /address":"([^"]+)"/,
 ];
 
-const PROXY_SERVICES = [
-  (url: string) => `https://cors-anywhere.herokuapp.com/${url}`,
-  (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-  (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-  (url: string) => `https://thingproxy.freeboard.io/fetch/${url}`,
-];
-
 const ERROR_MESSAGES: Record<string, string> = {
   "408": "リクエストがタイムアウトしました。時間をおいて再度お試しください。",
   "429": "アクセス制限に達しました。しばらく待ってから再度お試しください。",
@@ -108,55 +101,6 @@ function parseLongGoogleMapsUrl(url: string): ParseResult {
   }
 }
 
-async function fetchWithProxy(url: string, proxyService: (url: string) => string): Promise<string> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 15000);
-
-  try {
-    const response = await fetch(proxyService(url), {
-      method: "GET",
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-      },
-      signal: controller.signal,
-    });
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-
-    return await response.text();
-  } finally {
-    clearTimeout(timeoutId);
-  }
-}
-
-async function fetchWithFallback(url: string): Promise<string> {
-  let lastError: Error | null = null;
-
-  for (let i = 0; i < PROXY_SERVICES.length; i++) {
-    try {
-      const htmlContent = await fetchWithProxy(url, PROXY_SERVICES[i]);
-      if (htmlContent && htmlContent.length > 1000) {
-        return htmlContent;
-      }
-    } catch (error) {
-      lastError = error instanceof Error ? error : new Error(String(error));
-      console.warn(`プロキシ ${i + 1} 失敗:`, lastError.message);
-
-      if (i === PROXY_SERVICES.length - 1) {
-        throw lastError;
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
-  }
-
-  throw new Error("有効なコンテンツを取得できませんでした");
-}
-
 function extractCoordinatesFromHtml(htmlContent: string): Coordinates | null {
   for (const pattern of Object.values(COORDINATE_PATTERNS)) {
     const matches = Array.from(htmlContent.matchAll(pattern));
@@ -205,8 +149,8 @@ function getUserFriendlyError(error: Error): string {
  */
 async function parseShortGoogleMapsUrl(url: string): Promise<ParseResult> {
   try {
-    const htmlContent = await fetchWithFallback(url);
-    const coordinates = extractCoordinatesFromHtml(htmlContent);
+    const htmlContent = await fetch(url);
+    const coordinates = extractCoordinatesFromHtml(await htmlContent.text());
 
     if (!coordinates) {
       return {
@@ -216,7 +160,7 @@ async function parseShortGoogleMapsUrl(url: string): Promise<ParseResult> {
       };
     }
 
-    const address = extractAddressFromHtml(htmlContent);
+    const address = extractAddressFromHtml(await htmlContent.text());
 
     return {
       success: true,
