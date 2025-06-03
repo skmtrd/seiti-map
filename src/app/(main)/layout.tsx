@@ -4,6 +4,7 @@ import "../globals.css";
 import { getWorks } from "@/app/actions/work";
 import { Toolbar } from "@/components/Toolbar/Toolbar";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +29,9 @@ export default async function RootLayout({
   const works = await getWorks();
   return (
     <div className="flex h-screen">
-      <Toolbar works={works} />
+      <Suspense>
+        <Toolbar works={works} />
+      </Suspense>
       <div className="flex-1">{children}</div>
     </div>
   );
