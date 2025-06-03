@@ -519,7 +519,7 @@ export function CreateSpotForm({ works }: CreateSpotFormProps) {
             <div className="space-y-2">
               <Label htmlFor="address" className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
-                住所
+                住所 (任意)
               </Label>
               <Input
                 id="address"
@@ -529,9 +529,6 @@ export function CreateSpotForm({ works }: CreateSpotFormProps) {
                 placeholder="例：東京都千代田区外神田2丁目16-2（URL解析で自動入力されます）"
                 className="flex-1"
               />
-              <p className="text-muted-foreground text-sm">
-                手動入力も可能ですが、URL解析で自動入力されることをお勧めします
-              </p>
             </div>
 
             {/* 位置情報 */}
@@ -573,12 +570,7 @@ export function CreateSpotForm({ works }: CreateSpotFormProps) {
             {/* 位置プレビュー */}
             {shouldShowMap && (
               <div className="space-y-2">
-                <Label className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  位置プレビュー
-                  {isUrlParsing && <Loader2 className="h-4 w-4 animate-spin text-green-600" />}
-                </Label>
-                <Card>
+                <Card className="p-0">
                   <CardContent className="p-0">
                     <iframe
                       src={`https://maps.google.com/maps?q=${getMapQuery()}&t=&z=16&ie=UTF8&iwloc=&output=embed`}
@@ -592,31 +584,6 @@ export function CreateSpotForm({ works }: CreateSpotFormProps) {
                       className="rounded-t-lg"
                     />
                     <div className="space-y-2 p-4">
-                      {formData.latitude && formData.longitude ? (
-                        <div>
-                          <p className="text-sm">
-                            <span className="font-medium">座標:</span> {formData.latitude},{" "}
-                            {formData.longitude}
-                            {isUrlParsing && (
-                              <span className="ml-2 text-green-600 text-xs">(URL解析中...)</span>
-                            )}
-                          </p>
-                          <p className="text-muted-foreground text-xs">
-                            Google Maps URL から取得した高精度座標
-                          </p>
-                        </div>
-                      ) : (
-                        <p className="text-sm">
-                          <span className="font-medium">座標:</span> Google Maps
-                          URLから自動取得されます
-                        </p>
-                      )}
-                      {formData.address && (
-                        <p className="text-sm">
-                          <span className="font-medium">住所:</span>{" "}
-                          {extractedAddress || formData.address}
-                        </p>
-                      )}
                       <p className="text-muted-foreground text-xs">
                         <MapPin className="mr-1 inline h-3 w-3" />
                         <a
