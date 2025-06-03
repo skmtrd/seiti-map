@@ -105,15 +105,9 @@ export async function getCitiesByPrefecture(prefecture: string): Promise<string[
   }
 }
 
-// 新しいスポットを作成する関数（新規作品作成対応）
+// 新しいスポットを作成する関数（新規作品作成・画像アップロード統合対応）
 export async function createSpot(
-  data: Omit<SpotInsert, "id" | "submitted_by" | "created_at" | "updated_at">,
-  newWorkData?: {
-    title: string;
-    type: "anime" | "drama" | "movie" | "game" | "novel" | "manga" | "other";
-    description?: string;
-    releaseYear?: number;
-  }
+  formData: FormData
 ): Promise<{ success: boolean; spot?: SpotWithWork; error?: string }> {
   try {
     // 認証されたサーバークライアントを作成
@@ -134,15 +128,54 @@ export async function createSpot(
       return { success: false, error: "ログインが必要です" };
     }
 
-    let actualWorkId = data.work_id;
+    // FormDataからデータを抽出
+    const workId = formData.get("work_id") as string;
+    const name = formData.get("name") as string;
+    const description = formData.get("description") as string;
+    const latitude = Number(formData.get("latitude"));
+    const longitude = Number(formData.get("longitude"));
+    const address = formData.get("address") as string;
+    const prefecture = formData.get("prefecture") as string;
+    const city = formData.get("city") as string;
+    const imageFile = formData.get("image") as File | null;
+
+    // 入力検証
+    if (!workId || !name || !description || Number.isNaN(latitude) || Number.isNaN(longitude)) {
+      return { success: false, error: "必須項目が不足しています" };
+    }
+
+    console.log("FormData extracted:", {
+      workId,
+      name,
+      description,
+      latitude,
+      longitude,
+      address,
+      prefecture,
+      city,
+      imageFile: imageFile
+        ? { name: imageFile.name, size: imageFile.size, type: imageFile.type }
+        : null,
+    });
+
+    let actualWorkId = workId;
 
     // 新規作品作成が必要な場合
-    if (newWorkData && data.work_id === "new") {
+    if (workId === "new") {
+      const newWorkTitle = formData.get("new_work_title") as string;
+      const newWorkType = formData.get("new_work_type") as string;
+      const newWorkDescription = formData.get("new_work_description") as string;
+      const newWorkYear = formData.get("new_work_year") as string;
+
+      if (!newWorkTitle.trim()) {
+        return { success: false, error: "新しい作品の名前を入力してください" };
+      }
+
       const workResult = await createWork(
-        newWorkData.title,
-        newWorkData.type,
-        newWorkData.description,
-        newWorkData.releaseYear
+        newWorkTitle.trim(),
+        newWorkType as "anime" | "drama" | "movie" | "game" | "novel" | "manga" | "other",
+        newWorkDescription || undefined,
+        newWorkYear ? Number(newWorkYear) : undefined
       );
 
       if (!workResult.success || !workResult.work) {
@@ -155,13 +188,71 @@ export async function createSpot(
       actualWorkId = workResult.work.id;
     }
 
-    // スポットデータを準備（認証ユーザーIDを設定）
+    // 画像がある場合は事前にアップロード
+    let imageUrl: string | null = null;
+    if (imageFile && imageFile.size > 0) {
+      console.log("Starting image upload...");
+
+      try {
+        // ファイル名を生成（タイムスタンプ + ランダム文字列 + 元のファイル名）
+        const timestamp = Date.now();
+        const randomString = Math.random().toString(36).substring(2, 15);
+        const fileExtension = imageFile.name.split(".").pop() || "jpg";
+        const fileName = `${timestamp}_${randomString}.${fileExtension}`;
+        // ユーザーIDをフォルダ名として使用（RLSポリシーに準拠）
+        const filePath = `${user.id}/${fileName}`;
+
+        console.log("Uploading image:", {
+          filePath,
+          fileSize: imageFile.size,
+          fileType: imageFile.type,
+        });
+
+        // Supabase Storageにアップロード
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("spot-images")
+          .upload(filePath, imageFile, {
+            cacheControl: "3600",
+            upsert: false,
+          });
+
+        if (uploadError) {
+          console.error("Upload error details:", uploadError);
+          return {
+            success: false,
+            error: `画像のアップロードに失敗しました: ${uploadError.message}`,
+          };
+        }
+
+        // 公開URLを取得
+        const { data: urlData } = supabase.storage.from("spot-images").getPublicUrl(filePath);
+
+        if (!urlData.publicUrl) {
+          return { success: false, error: "画像URLの取得に失敗しました" };
+        }
+
+        imageUrl = urlData.publicUrl;
+        console.log("Image uploaded successfully:", imageUrl);
+      } catch (error) {
+        console.error("Image upload error:", error);
+        return { success: false, error: "画像のアップロード中にエラーが発生しました" };
+      }
+    }
+
+    // スポットデータを準備（image_urlを含む）
     const spotData: SpotInsert = {
-      ...data,
       work_id: actualWorkId,
+      name,
+      description,
+      latitude,
+      longitude,
+      address,
+      prefecture,
+      city,
       submitted_by: user.id,
-      is_public: data.is_public ?? true,
+      is_public: true,
       view_count: 0,
+      image_url: imageUrl, // 画像URLを直接設定
     };
 
     // スポットを作成
@@ -184,6 +275,12 @@ export async function createSpot(
       console.error("Insert error:", insertError);
       return { success: false, error: "スポットの作成に失敗しました" };
     }
+
+    console.log("Spot created successfully:", {
+      id: spotResult.id,
+      name: spotResult.name,
+      image_url: spotResult.image_url,
+    });
 
     // キャッシュを無効化
     revalidatePath("/");

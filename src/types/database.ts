@@ -20,6 +20,7 @@ export type Database = {
           submitted_by: string | null;
           is_public: boolean;
           view_count: number;
+          image_url: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -40,6 +41,7 @@ export type Database = {
           submitted_by?: string | null;
           is_public?: boolean;
           view_count?: number;
+          image_url?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -60,6 +62,7 @@ export type Database = {
           submitted_by?: string | null;
           is_public?: boolean;
           view_count?: number;
+          image_url?: string | null;
           created_at?: string;
           updated_at?: string;
         };

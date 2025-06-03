@@ -2,10 +2,12 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import type { SpotWithWork } from "@/types/database";
-import { Film, Info, MapPin, X } from "lucide-react";
+import { Film, Landmark, MapPin } from "lucide-react";
+import Image from "next/image";
 import { Popup } from "react-map-gl/maplibre";
+import { Spacer } from "../common/Spacer";
 
 interface SpotPopupProps {
   selectedSpot: SpotWithWork;
@@ -67,6 +69,17 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
     }
   };
 
+  // Google MapsのURLを生成
+  const getGoogleMapsUrl = () => {
+    if (selectedSpot.latitude && selectedSpot.longitude) {
+      return `https://maps.google.com/?q=${selectedSpot.latitude},${selectedSpot.longitude}`;
+    }
+    if (selectedSpot.address) {
+      return `https://maps.google.com/?q=${encodeURIComponent(selectedSpot.address)}`;
+    }
+    return "https://maps.google.com";
+  };
+
   return (
     <Popup
       longitude={selectedSpot.longitude}
@@ -78,61 +91,62 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
       offset={[0, -10]}
     >
       <Card className="w-80 border-0 shadow-xl">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <CardTitle className="mb-2 font-bold text-gray-900 text-lg">
-                {selectedSpot.name}
-              </CardTitle>
-
-              {/* 作品情報の表示 */}
-              {selectedSpot.works && (
-                <div className="mb-3 p-2 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Film className="h-4 w-4 text-indigo-600" />
-                    <span className="text-sm font-medium text-indigo-800">
-                      {selectedSpot.works.title}
-                    </span>
-                  </div>
-                  <Badge
-                    variant="secondary"
-                    className={`${getWorkTypeBadgeColor(selectedSpot.works.type)} text-xs`}
-                  >
-                    {getWorkTypeLabel(selectedSpot.works.type)}
-                  </Badge>
-                </div>
-              )}
-
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs text-gray-500">
-                  {selectedSpot.prefecture} {selectedSpot.city}
-                </span>
-              </div>
-              {selectedSpot.address && (
-                <p className="text-xs text-gray-600 flex items-center gap-1">
-                  <MapPin className="h-3 w-3" />
-                  {selectedSpot.address}
-                </p>
-              )}
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0 hover:bg-gray-100"
-              onClick={onClose}
-            >
-              <X className="h-4 w-4 text-gray-500" />
-            </Button>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Landmark className="h-5 w-5" />
+            <CardTitle className="font-bold text-gray-900 text-lg">{selectedSpot.name}</CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="pt-0">
-          {selectedSpot.description && (
-            <CardDescription className="text-gray-600 text-sm leading-relaxed mb-3">
-              <Info className="mr-1 mb-1 inline h-4 w-4" />
-              {selectedSpot.description}
-            </CardDescription>
+
+        <CardContent>
+          {/* 作品情報の表示 */}
+          {selectedSpot.works && (
+            <div className="flex gap-2 flex-col">
+              <Badge
+                variant="secondary"
+                className={`${getWorkTypeBadgeColor(selectedSpot.works.type)} text-xs`}
+              >
+                {getWorkTypeLabel(selectedSpot.works.type)}
+              </Badge>
+              <div className="p-2 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Film className="h-4 w-4 text-indigo-600" />
+                  <span className="text-sm font-medium text-indigo-800">
+                    {selectedSpot.works.title}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+          {/* 画像表示セクション */}
+          {selectedSpot.image_url && (
+            <>
+              <Spacer height={4} />
+              <div className="rounded-lg overflow-hidden">
+                <Image
+                  src={selectedSpot.image_url}
+                  alt="投稿画像"
+                  width={1200}
+                  height={1200}
+                  className="w-full"
+                />
+              </div>
+            </>
           )}
         </CardContent>
+
+        <CardFooter>
+          <Button
+            asChild
+            variant="default"
+            className="w-full flex items-center justify-center gap-2 text-base"
+          >
+            <a href={getGoogleMapsUrl()} target="_blank" rel="noopener noreferrer">
+              <MapPin className="h-5 w-5 text-white drop-shadow-sm" />
+              <span className="tracking-wide">Google Mapで開く</span>
+            </a>
+          </Button>
+        </CardFooter>
       </Card>
     </Popup>
   );

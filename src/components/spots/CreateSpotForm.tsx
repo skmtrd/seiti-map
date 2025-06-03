@@ -1,13 +1,30 @@
 "use client";
 
 import { createSpot } from "@/app/actions/spot";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { parseGoogleMapsUrl } from "@/functions/mapUrlparser";
 import type { Work } from "@/types/database";
-import { useState } from "react";
+import { Camera, Check, FileText, Link, Loader2, MapPin, X } from "lucide-react";
+import { type ChangeEvent, type FormEvent, useState } from "react";
 
 interface CreateSpotFormProps {
   works: Work[];
+}
+
+interface FormData {
+  work_id: string;
+  name: string;
+  description: string;
+  address: string;
+  mapsUrl: string;
+  latitude: string;
+  longitude: string;
+  image: File | null;
 }
 
 export function CreateSpotForm({ works }: CreateSpotFormProps) {
@@ -15,61 +32,173 @@ export function CreateSpotForm({ works }: CreateSpotFormProps) {
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [isNewWork, setIsNewWork] = useState(false);
 
-  async function handleSubmit(formData: FormData) {
+  // 新しい機能用のstate
+  const [formData, setFormData] = useState<FormData>({
+    work_id: "",
+    name: "",
+    description: "",
+    address: "",
+    mapsUrl: "",
+    latitude: "",
+    longitude: "",
+    image: null,
+  });
+
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUrlParsing, setIsUrlParsing] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+  const [urlParseError, setUrlParseError] = useState<string | null>(null);
+  const [urlParseStatus, setUrlParseStatus] = useState<string>("");
+  const [extractedAddress, setExtractedAddress] = useState<string>("");
+
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "mapsUrl") {
+      setUrlParseError(null);
+      setUrlParseStatus("");
+      setExtractedAddress("");
+    }
+
+    if (name === "work_id") {
+      setIsNewWork(value === "new");
+    }
+  };
+
+  const handleCoordinateChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    const updatedFormData = { ...formData, [name]: value };
+    if (updatedFormData.latitude && updatedFormData.longitude) {
+      setShowMap(true);
+    }
+  };
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setFormData((prev) => ({ ...prev, image: file }));
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        setImagePreview(e.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleMapsUrlParse = async () => {
+    if (!formData.mapsUrl.trim()) {
+      setUrlParseError("Google Maps URLを入力してください");
+      return;
+    }
+
+    setIsUrlParsing(true);
+    setUrlParseError(null);
+    setUrlParseStatus("Google Maps URLを解析中...");
+    setExtractedAddress("");
+
+    try {
+      const result = await parseGoogleMapsUrl(formData.mapsUrl);
+
+      if (result.success && result.coordinates) {
+        const { latitude, longitude } = result.coordinates;
+
+        setFormData((prev) => ({
+          ...prev,
+          latitude: latitude.toFixed(6),
+          longitude: longitude.toFixed(6),
+          address: result.address || prev.address,
+        }));
+
+        setShowMap(true);
+        setUrlParseError(null);
+        setUrlParseStatus("URL解析完了 - 座標と住所を取得しました");
+
+        if (result.address) {
+          setExtractedAddress(result.address);
+        }
+      } else {
+        setUrlParseError(result.error || "Google Maps URLから座標を抽出できませんでした。");
+        setUrlParseStatus("");
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      setUrlParseError(`URL解析中にエラーが発生しました: ${errorMessage}`);
+      setUrlParseStatus("");
+    } finally {
+      setIsUrlParsing(false);
+    }
+  };
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
     setIsSubmitting(true);
     setMessage(null);
 
     try {
-      const workId = formData.get("work_id") as string;
+      const form = e.target as HTMLFormElement;
+      const submissionFormData = new FormData(form);
 
-      const spotData = {
-        work_id: workId,
-        name: formData.get("name") as string,
-        description: formData.get("description") as string,
-        latitude: Number(formData.get("latitude")),
-        longitude: Number(formData.get("longitude")),
-        prefecture: formData.get("prefecture") as string,
-        city: formData.get("city") as string,
-        address: formData.get("address") as string,
-      };
+      // FormDataにStateの値を追加
+      submissionFormData.set("work_id", formData.work_id);
+      submissionFormData.set("name", formData.name);
+      submissionFormData.set("description", formData.description);
+      submissionFormData.set("latitude", formData.latitude);
+      submissionFormData.set("longitude", formData.longitude);
+      submissionFormData.set("address", formData.address);
+      submissionFormData.set("prefecture", extractPrefectureFromAddress(formData.address));
+      submissionFormData.set("city", extractCityFromAddress(formData.address));
 
-      // 新規作品作成の場合のデータ
-      let newWorkData:
-        | {
-            title: string;
-            type: "anime" | "drama" | "movie" | "game" | "novel" | "manga" | "other";
-            description?: string;
-            releaseYear?: number;
-          }
-        | undefined;
-
-      if (workId === "new") {
-        const newWorkTitle = formData.get("new_work_title") as string;
-        const newWorkType = formData.get("new_work_type") as string;
-
-        if (!newWorkTitle.trim()) {
-          setMessage({ type: "error", text: "新しい作品の名前を入力してください" });
-          return;
-        }
-
-        newWorkData = {
-          title: newWorkTitle.trim(),
-          type: newWorkType as "anime" | "drama" | "movie" | "game" | "novel" | "manga" | "other",
-          description: (formData.get("new_work_description") as string) || undefined,
-          releaseYear: formData.get("new_work_year")
-            ? Number(formData.get("new_work_year"))
-            : undefined,
-        };
+      // 画像ファイルを追加
+      if (formData.image) {
+        submissionFormData.set("image", formData.image);
       }
 
-      const result = await createSpot(spotData, newWorkData);
+      console.log("Submitting spot with FormData:", {
+        work_id: submissionFormData.get("work_id"),
+        name: submissionFormData.get("name"),
+        description: submissionFormData.get("description"),
+        latitude: submissionFormData.get("latitude"),
+        longitude: submissionFormData.get("longitude"),
+        address: submissionFormData.get("address"),
+        prefecture: submissionFormData.get("prefecture"),
+        city: submissionFormData.get("city"),
+        imageFile: formData.image
+          ? { name: formData.image.name, size: formData.image.size, type: formData.image.type }
+          : null,
+      });
+
+      const result = await createSpot(submissionFormData);
+
+      console.log("CreateSpot result:", result);
 
       if (result.success) {
         setMessage({ type: "success", text: "スポットが正常に作成されました！" });
         // フォームをリセット
-        const form = document.getElementById("spot-form") as HTMLFormElement;
-        form?.reset();
+        setFormData({
+          work_id: "",
+          name: "",
+          description: "",
+          address: "",
+          mapsUrl: "",
+          latitude: "",
+          longitude: "",
+          image: null,
+        });
+        setImagePreview(null);
         setIsNewWork(false);
+        setShowMap(false);
+        setUrlParseStatus("");
+        setExtractedAddress("");
+        // HTMLフォームもリセット
+        form.reset();
       } else {
         setMessage({ type: "error", text: result.error || "エラーが発生しました" });
       }
@@ -80,247 +209,514 @@ export function CreateSpotForm({ works }: CreateSpotFormProps) {
     }
   }
 
+  // 住所から都道府県を抽出する簡易関数
+  function extractPrefectureFromAddress(address: string): string {
+    const prefectures = [
+      "北海道",
+      "青森県",
+      "岩手県",
+      "宮城県",
+      "秋田県",
+      "山形県",
+      "福島県",
+      "茨城県",
+      "栃木県",
+      "群馬県",
+      "埼玉県",
+      "千葉県",
+      "東京都",
+      "神奈川県",
+      "新潟県",
+      "富山県",
+      "石川県",
+      "福井県",
+      "山梨県",
+      "長野県",
+      "岐阜県",
+      "静岡県",
+      "愛知県",
+      "三重県",
+      "滋賀県",
+      "京都府",
+      "大阪府",
+      "兵庫県",
+      "奈良県",
+      "和歌山県",
+      "鳥取県",
+      "島根県",
+      "岡山県",
+      "広島県",
+      "山口県",
+      "徳島県",
+      "香川県",
+      "愛媛県",
+      "高知県",
+      "福岡県",
+      "佐賀県",
+      "長崎県",
+      "熊本県",
+      "大分県",
+      "宮崎県",
+      "鹿児島県",
+      "沖縄県",
+    ];
+
+    for (const prefecture of prefectures) {
+      if (address.includes(prefecture)) {
+        return prefecture;
+      }
+    }
+    return "";
+  }
+
+  // 住所から市区町村を抽出する簡易関数
+  function extractCityFromAddress(address: string): string {
+    const cityMatch = address.match(/[都道府県](.+?)[市区町村]/);
+    return cityMatch ? cityMatch[1] + cityMatch[0].slice(-1) : "";
+  }
+
+  const isFormValid =
+    formData.work_id &&
+    formData.name &&
+    formData.description &&
+    (formData.address || (formData.latitude && formData.longitude));
+
+  const getMapQuery = () => {
+    if (formData.latitude && formData.longitude) {
+      return `${formData.latitude},${formData.longitude}`;
+    }
+    return encodeURIComponent(formData.address);
+  };
+
+  const shouldShowMap = showMap && (formData.address || (formData.latitude && formData.longitude));
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>スポット情報</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form id="spot-form" action={handleSubmit} className="space-y-6">
-          {/* 作品選択 */}
+    <div className="space-y-6">
+      {/* 使用方法の説明 */}
+      <Alert>
+        <AlertDescription>
           <div>
-            <label htmlFor="work_id" className="block text-sm font-medium mb-2">
-              作品 *
-            </label>
-            <select
-              id="work_id"
-              name="work_id"
-              required
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              onChange={(e) => setIsNewWork(e.target.value === "new")}
-            >
-              <option value="">作品を選択してください</option>
-              <option value="new" className="font-bold text-blue-600">
-                + 新しい作品を登録
-              </option>
-              {works.map((work) => (
-                <option key={work.id} value={work.id}>
-                  {work.title} ({work.type})
+            <h3 className="mb-2 font-medium">座標取得について（両方の形式に対応）</h3>
+            <div className="space-y-1 text-sm">
+              <p>
+                • <strong>短縮URL</strong>: スマホのGoogle Mapsから「共有」→「リンクをコピー」
+              </p>
+              <p>
+                • <strong>長いURL</strong>: PCのGoogle Mapsから場所のURLをコピー
+              </p>
+              <p>• どちらの形式も同じURL欄に貼り付けて「URL解析」で自動処理</p>
+              <p>• 座標と住所情報を自動取得します</p>
+            </div>
+          </div>
+        </AlertDescription>
+      </Alert>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MapPin className="h-5 w-5" />
+            スポット情報
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* 作品選択 */}
+            <div>
+              <label htmlFor="work_id" className="block text-sm font-medium mb-2">
+                作品 *
+              </label>
+              <select
+                id="work_id"
+                name="work_id"
+                value={formData.work_id}
+                onChange={handleInputChange}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">作品を選択してください</option>
+                <option value="new" className="font-bold text-blue-600">
+                  + 新しい作品を登録
                 </option>
-              ))}
-            </select>
-          </div>
+                {works.map((work) => (
+                  <option key={work.id} value={work.id}>
+                    {work.title} ({work.type})
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          {/* 新規作品作成フィールド */}
-          {isNewWork && (
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-              <h3 className="text-lg font-medium mb-4 text-blue-900">新しい作品の情報</h3>
+            {/* 新規作品作成フィールド */}
+            {isNewWork && (
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h3 className="text-lg font-medium mb-4 text-blue-900">新しい作品の情報</h3>
 
-              {/* 作品名 */}
-              <div className="mb-4">
-                <label
-                  htmlFor="new_work_title"
-                  className="block text-sm font-medium mb-2 text-blue-800"
-                >
-                  作品名 *
-                </label>
-                <input
-                  type="text"
-                  id="new_work_title"
-                  name="new_work_title"
-                  required={isNewWork}
-                  className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="例: 君の名は。"
+                {/* 作品名 */}
+                <div className="mb-4">
+                  <label
+                    htmlFor="new_work_title"
+                    className="block text-sm font-medium mb-2 text-blue-800"
+                  >
+                    作品名 *
+                  </label>
+                  <input
+                    type="text"
+                    id="new_work_title"
+                    name="new_work_title"
+                    required={isNewWork}
+                    className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="例: 君の名は。"
+                  />
+                </div>
+
+                {/* 作品タイプ */}
+                <div className="mb-4">
+                  <label
+                    htmlFor="new_work_type"
+                    className="block text-sm font-medium mb-2 text-blue-800"
+                  >
+                    作品の種類 *
+                  </label>
+                  <select
+                    id="new_work_type"
+                    name="new_work_type"
+                    required={isNewWork}
+                    className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="">種類を選択してください</option>
+                    <option value="anime">アニメ</option>
+                    <option value="drama">ドラマ</option>
+                    <option value="movie">映画</option>
+                    <option value="game">ゲーム</option>
+                    <option value="novel">小説</option>
+                    <option value="manga">漫画</option>
+                    <option value="other">その他</option>
+                  </select>
+                </div>
+
+                {/* 作品説明（任意） */}
+                <div className="mb-4">
+                  <label
+                    htmlFor="new_work_description"
+                    className="block text-sm font-medium mb-2 text-blue-800"
+                  >
+                    作品の説明（任意）
+                  </label>
+                  <textarea
+                    id="new_work_description"
+                    name="new_work_description"
+                    rows={3}
+                    className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="作品についての簡単な説明"
+                  />
+                </div>
+
+                {/* 公開年（任意） */}
+                <div>
+                  <label
+                    htmlFor="new_work_year"
+                    className="block text-sm font-medium mb-2 text-blue-800"
+                  >
+                    公開年（任意）
+                  </label>
+                  <input
+                    type="number"
+                    id="new_work_year"
+                    name="new_work_year"
+                    min="1900"
+                    max={new Date().getFullYear() + 5}
+                    className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="例: 2016"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* スポット名 */}
+            <div className="space-y-2">
+              <Label htmlFor="name" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                スポット名 *
+              </Label>
+              <Input
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                placeholder="例：神社の鳥居、学校の屋上、東京駅など"
+                required
+              />
+            </div>
+
+            {/* 説明 */}
+            <div className="space-y-2">
+              <Label htmlFor="description" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                詳細説明 *
+              </Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="作品名、シーン、エピソードなどを詳しく教えてください"
+                rows={4}
+                required
+              />
+            </div>
+
+            {/* Google Maps URL */}
+            <div className="space-y-2">
+              <Label htmlFor="mapsUrl" className="flex items-center gap-2">
+                <Link className="h-4 w-4" />
+                Google Maps URL *
+                {isUrlParsing && (
+                  <span className="flex items-center gap-1 text-green-600 text-sm">
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                    解析中...
+                  </span>
+                )}
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  id="mapsUrl"
+                  name="mapsUrl"
+                  value={formData.mapsUrl}
+                  onChange={handleInputChange}
+                  placeholder="短縮URL: https://maps.app.goo.gl/xxx または 長いURL: https://www.google.com/maps/place/xxx"
+                  className="flex-1"
+                  required
                 />
+                <Button
+                  type="button"
+                  onClick={handleMapsUrlParse}
+                  disabled={!formData.mapsUrl.trim() || isUrlParsing}
+                  variant="outline"
+                  className="shrink-0"
+                >
+                  {isUrlParsing ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <>
+                      <Link className="mr-1 h-4 w-4" />
+                      URL解析
+                    </>
+                  )}
+                </Button>
               </div>
-
-              {/* 作品タイプ */}
-              <div className="mb-4">
-                <label
-                  htmlFor="new_work_type"
-                  className="block text-sm font-medium mb-2 text-blue-800"
-                >
-                  作品の種類 *
-                </label>
-                <select
-                  id="new_work_type"
-                  name="new_work_type"
-                  required={isNewWork}
-                  className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="">種類を選択してください</option>
-                  <option value="anime">アニメ</option>
-                  <option value="drama">ドラマ</option>
-                  <option value="movie">映画</option>
-                  <option value="game">ゲーム</option>
-                  <option value="novel">小説</option>
-                  <option value="manga">漫画</option>
-                  <option value="other">その他</option>
-                </select>
+              {urlParseStatus && <p className="text-blue-600 text-sm">{urlParseStatus}</p>}
+              {extractedAddress && extractedAddress !== formData.address && (
+                <p className="text-green-600 text-sm">抽出された住所: {extractedAddress}</p>
+              )}
+              {urlParseError && <p className="text-red-500 text-sm">{urlParseError}</p>}
+              <div className="space-y-1 text-muted-foreground text-sm">
+                <p>両方の形式に対応しています：</p>
+                <p>• 短縮URL: スマホのGoogle Mapsから「共有」→「リンクをコピー」</p>
+                <p>• 長いURL: PCのGoogle Mapsから場所のURLをコピー</p>
               </div>
+            </div>
 
-              {/* 作品説明（任意） */}
-              <div className="mb-4">
-                <label
-                  htmlFor="new_work_description"
-                  className="block text-sm font-medium mb-2 text-blue-800"
-                >
-                  作品の説明（任意）
-                </label>
-                <textarea
-                  id="new_work_description"
-                  name="new_work_description"
-                  rows={3}
-                  className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="作品についての簡単な説明"
+            {/* 住所 */}
+            <div className="space-y-2">
+              <Label htmlFor="address" className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                住所
+              </Label>
+              <Input
+                id="address"
+                name="address"
+                value={formData.address}
+                onChange={handleInputChange}
+                placeholder="例：東京都千代田区外神田2丁目16-2（URL解析で自動入力されます）"
+                className="flex-1"
+              />
+              <p className="text-muted-foreground text-sm">
+                手動入力も可能ですが、URL解析で自動入力されることをお勧めします
+              </p>
+            </div>
+
+            {/* 位置情報 */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="latitude" className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  緯度
+                </Label>
+                <Input
+                  id="latitude"
+                  name="latitude"
+                  value={formData.latitude}
+                  onChange={handleCoordinateChange}
+                  placeholder="35.681236"
+                  readOnly
+                  className="bg-gray-50"
                 />
+                <p className="text-muted-foreground text-xs">URL解析で自動入力</p>
               </div>
-
-              {/* 公開年（任意） */}
-              <div>
-                <label
-                  htmlFor="new_work_year"
-                  className="block text-sm font-medium mb-2 text-blue-800"
-                >
-                  公開年（任意）
-                </label>
-                <input
-                  type="number"
-                  id="new_work_year"
-                  name="new_work_year"
-                  min="1900"
-                  max={new Date().getFullYear() + 5}
-                  className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="例: 2016"
+              <div className="space-y-2">
+                <Label htmlFor="longitude" className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  経度
+                </Label>
+                <Input
+                  id="longitude"
+                  name="longitude"
+                  value={formData.longitude}
+                  onChange={handleCoordinateChange}
+                  placeholder="139.767125"
+                  readOnly
+                  className="bg-gray-50"
                 />
+                <p className="text-muted-foreground text-xs">URL解析で自動入力</p>
               </div>
             </div>
-          )}
 
-          {/* スポット名 */}
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-2">
-              スポット名 *
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              required
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="例: 東京駅"
-            />
-          </div>
+            {/* 位置プレビュー */}
+            {shouldShowMap && (
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  位置プレビュー
+                  {isUrlParsing && <Loader2 className="h-4 w-4 animate-spin text-green-600" />}
+                </Label>
+                <Card>
+                  <CardContent className="p-0">
+                    <iframe
+                      src={`https://maps.google.com/maps?q=${getMapQuery()}&t=&z=16&ie=UTF8&iwloc=&output=embed`}
+                      width="100%"
+                      height="300"
+                      style={{ border: 0 }}
+                      allowFullScreen={true}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="位置プレビュー"
+                      className="rounded-t-lg"
+                    />
+                    <div className="space-y-2 p-4">
+                      {formData.latitude && formData.longitude ? (
+                        <div>
+                          <p className="text-sm">
+                            <span className="font-medium">座標:</span> {formData.latitude},{" "}
+                            {formData.longitude}
+                            {isUrlParsing && (
+                              <span className="ml-2 text-green-600 text-xs">(URL解析中...)</span>
+                            )}
+                          </p>
+                          <p className="text-muted-foreground text-xs">
+                            Google Maps URL から取得した高精度座標
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-sm">
+                          <span className="font-medium">座標:</span> Google Maps
+                          URLから自動取得されます
+                        </p>
+                      )}
+                      {formData.address && (
+                        <p className="text-sm">
+                          <span className="font-medium">住所:</span>{" "}
+                          {extractedAddress || formData.address}
+                        </p>
+                      )}
+                      <p className="text-muted-foreground text-xs">
+                        <MapPin className="mr-1 inline h-3 w-3" />
+                        <a
+                          href={`https://maps.google.com/?q=${getMapQuery()}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 underline hover:text-blue-700"
+                        >
+                          Google Mapsで開く
+                        </a>
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
 
-          {/* 説明 */}
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium mb-2">
-              説明
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              rows={3}
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="このスポットについて説明してください"
-            />
-          </div>
-
-          {/* 位置情報 */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="latitude" className="block text-sm font-medium mb-2">
-                緯度 *
-              </label>
-              <input
-                type="number"
-                id="latitude"
-                name="latitude"
-                step="any"
-                required
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="35.6762"
-              />
+            {/* 画像アップロード */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Camera className="h-4 w-4" />
+                画像
+              </Label>
+              <Card className="border-dashed">
+                <CardContent className="p-6">
+                  {imagePreview ? (
+                    <div className="space-y-4">
+                      <img
+                        src={imagePreview}
+                        alt="プレビュー"
+                        className="mx-auto h-48 max-w-full rounded-lg object-cover"
+                      />
+                      <div className="text-center">
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => {
+                            setImagePreview(null);
+                            setFormData((prev) => ({ ...prev, image: null }));
+                          }}
+                        >
+                          <X className="mr-1 h-4 w-4" />
+                          画像を削除
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center">
+                      <Camera className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                      <p className="mb-4 text-muted-foreground">聖地の写真をアップロード</p>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                        id="image-upload"
+                      />
+                      <Button asChild variant="outline">
+                        <label htmlFor="image-upload" className="cursor-pointer">
+                          ファイルを選択
+                        </label>
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </div>
-            <div>
-              <label htmlFor="longitude" className="block text-sm font-medium mb-2">
-                経度 *
-              </label>
-              <input
-                type="number"
-                id="longitude"
-                name="longitude"
-                step="any"
-                required
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="139.6503"
-              />
-            </div>
-          </div>
 
-          {/* 住所情報 */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="prefecture" className="block text-sm font-medium mb-2">
-                都道府県 *
-              </label>
-              <input
-                type="text"
-                id="prefecture"
-                name="prefecture"
-                required
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="東京都"
-              />
-            </div>
-            <div>
-              <label htmlFor="city" className="block text-sm font-medium mb-2">
-                市区町村 *
-              </label>
-              <input
-                type="text"
-                id="city"
-                name="city"
-                required
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="千代田区"
-              />
-            </div>
-          </div>
+            {/* メッセージ表示 */}
+            {message && (
+              <div
+                className={`p-4 rounded-md ${
+                  message.type === "success"
+                    ? "bg-green-50 text-green-800 border border-green-200"
+                    : "bg-red-50 text-red-800 border border-red-200"
+                }`}
+              >
+                {message.text}
+              </div>
+            )}
 
-          {/* 住所 */}
-          <div>
-            <label htmlFor="address" className="block text-sm font-medium mb-2">
-              住所
-            </label>
-            <input
-              type="text"
-              id="address"
-              name="address"
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="東京都千代田区丸の内1丁目"
-            />
-          </div>
-
-          {/* メッセージ表示 */}
-          {message && (
-            <div
-              className={`p-4 rounded-md ${
-                message.type === "success"
-                  ? "bg-green-50 text-green-800 border border-green-200"
-                  : "bg-red-50 text-red-800 border border-red-200"
-              }`}
+            {/* 送信ボタン */}
+            <Button
+              type="submit"
+              disabled={!isFormValid || isSubmitting}
+              className="w-full"
+              size="lg"
             >
-              {message.text}
-            </div>
-          )}
+              {isSubmitting ? "投稿中..." : "スポットを投稿"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
 
-          {/* 送信ボタン */}
-          <Button type="submit" disabled={isSubmitting} className="w-full">
-            {isSubmitting ? "投稿中..." : "スポットを投稿"}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+      <div className="space-y-1 text-center text-muted-foreground text-sm">
+        <p>* マークの付いた項目は必須です</p>
+        <p>Google Maps URLから座標と住所を自動取得します</p>
+        <p>登録された聖地は即座に公開されます</p>
+      </div>
+    </div>
   );
 }
