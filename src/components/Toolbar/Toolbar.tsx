@@ -24,8 +24,8 @@ export async function Toolbar() {
       </div>
       <Drawer>
         <DrawerTrigger asChild>
-          <div className="absolute bottom-25 right-6 z-10 ">
-            <Button size="icon" variant="default">
+          <div className="fixed bottom-25 right-6 z-50">
+            <Button size="icon" variant="default" className="shadow-lg">
               <Search className="h-6 w-6" />
             </Button>
           </div>

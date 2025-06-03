@@ -12,7 +12,7 @@ export function CreateSpotButton() {
   };
 
   return (
-    <div className="absolute bottom-10 right-6 z-10">
+    <div className="fixed bottom-10 right-6 z-50">
       <Button onClick={handleCreateSpot} size="lg" variant="default">
         <Landmark className="h-6 w-6" />
         新しく聖地を登録する

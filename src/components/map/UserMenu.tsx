@@ -55,7 +55,7 @@ export const UserMenu: React.FC<UserMenuProps> = (props) => {
   };
 
   return (
-    <div className="absolute top-6 right-6 z-10" ref={menuRef}>
+    <div className="fixed top-6 right-6 z-50" ref={menuRef}>
       {/* アバターボタン */}
 
       {props.userAuthenticated ? (
