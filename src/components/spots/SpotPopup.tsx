@@ -132,12 +132,6 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
               {selectedSpot.description}
             </CardDescription>
           )}
-          {selectedSpot.visit_tips && (
-            <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-              <p className="text-blue-800 text-xs font-medium mb-1">訪問のコツ</p>
-              <p className="text-blue-700 text-sm">{selectedSpot.visit_tips}</p>
-            </div>
-          )}
         </CardContent>
       </Card>
     </Popup>

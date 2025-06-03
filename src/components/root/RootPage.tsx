@@ -136,12 +136,11 @@ const RootPage = () => {
               <Button
                 variant="default"
                 size="sm"
-                className={`${getDifficultyColor(spot.difficulty_level)} h-10 w-10 rounded-full border-2 border-white p-0 shadow-lg transition-all duration-200 hover:scale-110`}
+                className="bg-green-500 hover:bg-green-600 h-10 w-10 rounded-full border-2 border-white p-0 shadow-lg transition-all duration-200 hover:scale-110"
                 onClick={(e) => {
                   e.stopPropagation();
                   setSelectedSpot(spot);
                 }}
-                title={`${spot.name} (難易度: ${getDifficultyLabel(spot.difficulty_level)})`}
               >
                 <MapPin className="h-5 w-5 text-white" />
               </Button>

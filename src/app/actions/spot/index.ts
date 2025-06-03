@@ -1,7 +1,9 @@
 "use server";
 
 import { supabase } from "@/lib/supabase";
-import type { SpotWithWork } from "@/types/database";
+import { createClient } from "@/lib/supabase/server";
+import type { SpotInsert, SpotWithWork } from "@/types/database";
+import { revalidatePath } from "next/cache";
 
 interface GetSpotsOptions {
   prefecture?: string;
@@ -99,5 +101,68 @@ export async function getCitiesByPrefecture(prefecture: string): Promise<string[
   } catch (error) {
     console.error("getCitiesByPrefecture error:", error);
     throw new Error("市区町村の取得中にエラーが発生しました");
+  }
+}
+
+// 新しいスポットを作成する関数
+export async function createSpot(
+  data: Omit<SpotInsert, "id" | "submitted_by" | "created_at" | "updated_at">
+): Promise<{ success: boolean; spot?: SpotWithWork; error?: string }> {
+  try {
+    // 認証されたサーバークライアントを作成
+    const supabase = await createClient();
+
+    // 現在のユーザーを取得
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError) {
+      console.error("Auth error:", authError);
+      return { success: false, error: "認証エラーが発生しました" };
+    }
+
+    if (!user) {
+      return { success: false, error: "ログインが必要です" };
+    }
+
+    // スポットデータを準備（認証ユーザーIDを設定）
+    const spotData: SpotInsert = {
+      ...data,
+      submitted_by: user.id,
+      is_public: data.is_public ?? true,
+      view_count: 0,
+    };
+
+    // スポットを作成
+    const { data: spotResult, error: insertError } = await supabase
+      .from("spots")
+      .insert(spotData)
+      .select(`
+        *,
+        works (
+          id,
+          title,
+          type,
+          description,
+          release_year
+        )
+      `)
+      .single();
+
+    if (insertError) {
+      console.error("Insert error:", insertError);
+      return { success: false, error: "スポットの作成に失敗しました" };
+    }
+
+    // キャッシュを無効化
+    revalidatePath("/");
+    revalidatePath("/spots");
+
+    return { success: true, spot: spotResult };
+  } catch (error) {
+    console.error("createSpot error:", error);
+    return { success: false, error: "スポット作成中にエラーが発生しました" };
   }
 }
