@@ -11,7 +11,7 @@ export function CreateSpotButton() {
   };
 
   return (
-    <div className="absolute bottom-10 right-10 z-10">
+    <div className="absolute bottom-10 right-6 z-10">
       <Button onClick={handleCreateSpot} size="lg" variant="outline">
         新しく聖地を作成する
       </Button>

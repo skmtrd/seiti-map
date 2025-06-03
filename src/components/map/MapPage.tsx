@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Map as MapGL, Marker } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { CreateSpotButton } from "@/components/map/CreateSpotButton";
+import { UserMenu } from "@/components/map/UserMenu";
 import { SpotPopup } from "@/components/spots/SpotPopup";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,10 +19,15 @@ interface FilterOptions {
   limit?: number;
 }
 
-const RootPage = () => {
+interface MapPageProps {
+  userAuthenticated: boolean;
+}
+
+const RootPage: React.FC<MapPageProps> = (props) => {
   const [selectedSpot, setSelectedSpot] = useState<SpotWithWork | null>(null);
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({ limit: 50 });
 
+  console.log(props.userAuthenticated);
   const { spots, isLoading, isError, error, mutate } = useSpots(filterOptions);
 
   // 日本語対応マップスタイルのオプション
@@ -111,7 +117,7 @@ const RootPage = () => {
 
         {/* ローディング表示 */}
         {isLoading && (
-          <div className="absolute top-4 right-4 z-10">
+          <div className="absolute top-4 left-4 z-10">
             <Card className="p-4">
               <div className="flex items-center gap-2 text-blue-600">
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -153,8 +159,9 @@ const RootPage = () => {
           )}
         </MapGL>
 
-        {/* 新規スポット作成ボタン */}
+        {/* 浮遊配置系ボタン */}
         <CreateSpotButton />
+        <UserMenu userAuthenticated={props.userAuthenticated} />
       </div>
     </div>
   );
