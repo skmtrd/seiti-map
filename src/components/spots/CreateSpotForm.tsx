@@ -13,14 +13,17 @@ interface CreateSpotFormProps {
 export function CreateSpotForm({ works }: CreateSpotFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [isNewWork, setIsNewWork] = useState(false);
 
   async function handleSubmit(formData: FormData) {
     setIsSubmitting(true);
     setMessage(null);
 
     try {
+      const workId = formData.get("work_id") as string;
+
       const spotData = {
-        work_id: formData.get("work_id") as string,
+        work_id: workId,
         name: formData.get("name") as string,
         description: formData.get("description") as string,
         latitude: Number(formData.get("latitude")),
@@ -30,13 +33,43 @@ export function CreateSpotForm({ works }: CreateSpotFormProps) {
         address: formData.get("address") as string,
       };
 
-      const result = await createSpot(spotData);
+      // 新規作品作成の場合のデータ
+      let newWorkData:
+        | {
+            title: string;
+            type: "anime" | "drama" | "movie" | "game" | "novel" | "manga" | "other";
+            description?: string;
+            releaseYear?: number;
+          }
+        | undefined;
+
+      if (workId === "new") {
+        const newWorkTitle = formData.get("new_work_title") as string;
+        const newWorkType = formData.get("new_work_type") as string;
+
+        if (!newWorkTitle.trim()) {
+          setMessage({ type: "error", text: "新しい作品の名前を入力してください" });
+          return;
+        }
+
+        newWorkData = {
+          title: newWorkTitle.trim(),
+          type: newWorkType as "anime" | "drama" | "movie" | "game" | "novel" | "manga" | "other",
+          description: (formData.get("new_work_description") as string) || undefined,
+          releaseYear: formData.get("new_work_year")
+            ? Number(formData.get("new_work_year"))
+            : undefined,
+        };
+      }
+
+      const result = await createSpot(spotData, newWorkData);
 
       if (result.success) {
         setMessage({ type: "success", text: "スポットが正常に作成されました！" });
         // フォームをリセット
         const form = document.getElementById("spot-form") as HTMLFormElement;
         form?.reset();
+        setIsNewWork(false);
       } else {
         setMessage({ type: "error", text: result.error || "エラーが発生しました" });
       }
@@ -64,8 +97,12 @@ export function CreateSpotForm({ works }: CreateSpotFormProps) {
               name="work_id"
               required
               className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onChange={(e) => setIsNewWork(e.target.value === "new")}
             >
               <option value="">作品を選択してください</option>
+              <option value="new" className="font-bold text-blue-600">
+                + 新しい作品を登録
+              </option>
               {works.map((work) => (
                 <option key={work.id} value={work.id}>
                   {work.title} ({work.type})
@@ -73,6 +110,92 @@ export function CreateSpotForm({ works }: CreateSpotFormProps) {
               ))}
             </select>
           </div>
+
+          {/* 新規作品作成フィールド */}
+          {isNewWork && (
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <h3 className="text-lg font-medium mb-4 text-blue-900">新しい作品の情報</h3>
+
+              {/* 作品名 */}
+              <div className="mb-4">
+                <label
+                  htmlFor="new_work_title"
+                  className="block text-sm font-medium mb-2 text-blue-800"
+                >
+                  作品名 *
+                </label>
+                <input
+                  type="text"
+                  id="new_work_title"
+                  name="new_work_title"
+                  required={isNewWork}
+                  className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="例: 君の名は。"
+                />
+              </div>
+
+              {/* 作品タイプ */}
+              <div className="mb-4">
+                <label
+                  htmlFor="new_work_type"
+                  className="block text-sm font-medium mb-2 text-blue-800"
+                >
+                  作品の種類 *
+                </label>
+                <select
+                  id="new_work_type"
+                  name="new_work_type"
+                  required={isNewWork}
+                  className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">種類を選択してください</option>
+                  <option value="anime">アニメ</option>
+                  <option value="drama">ドラマ</option>
+                  <option value="movie">映画</option>
+                  <option value="game">ゲーム</option>
+                  <option value="novel">小説</option>
+                  <option value="manga">漫画</option>
+                  <option value="other">その他</option>
+                </select>
+              </div>
+
+              {/* 作品説明（任意） */}
+              <div className="mb-4">
+                <label
+                  htmlFor="new_work_description"
+                  className="block text-sm font-medium mb-2 text-blue-800"
+                >
+                  作品の説明（任意）
+                </label>
+                <textarea
+                  id="new_work_description"
+                  name="new_work_description"
+                  rows={3}
+                  className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="作品についての簡単な説明"
+                />
+              </div>
+
+              {/* 公開年（任意） */}
+              <div>
+                <label
+                  htmlFor="new_work_year"
+                  className="block text-sm font-medium mb-2 text-blue-800"
+                >
+                  公開年（任意）
+                </label>
+                <input
+                  type="number"
+                  id="new_work_year"
+                  name="new_work_year"
+                  min="1900"
+                  max={new Date().getFullYear() + 5}
+                  className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="例: 2016"
+                />
+              </div>
+            </div>
+          )}
 
           {/* スポット名 */}
           <div>

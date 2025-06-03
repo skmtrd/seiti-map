@@ -1,5 +1,6 @@
 "use server";
 
+import { createWork } from "@/app/actions/work";
 import { supabase } from "@/lib/supabase";
 import { createClient } from "@/lib/supabase/server";
 import type { SpotInsert, SpotWithWork } from "@/types/database";
@@ -104,9 +105,15 @@ export async function getCitiesByPrefecture(prefecture: string): Promise<string[
   }
 }
 
-// 新しいスポットを作成する関数
+// 新しいスポットを作成する関数（新規作品作成対応）
 export async function createSpot(
-  data: Omit<SpotInsert, "id" | "submitted_by" | "created_at" | "updated_at">
+  data: Omit<SpotInsert, "id" | "submitted_by" | "created_at" | "updated_at">,
+  newWorkData?: {
+    title: string;
+    type: "anime" | "drama" | "movie" | "game" | "novel" | "manga" | "other";
+    description?: string;
+    releaseYear?: number;
+  }
 ): Promise<{ success: boolean; spot?: SpotWithWork; error?: string }> {
   try {
     // 認証されたサーバークライアントを作成
@@ -127,9 +134,31 @@ export async function createSpot(
       return { success: false, error: "ログインが必要です" };
     }
 
+    let actualWorkId = data.work_id;
+
+    // 新規作品作成が必要な場合
+    if (newWorkData && data.work_id === "new") {
+      const workResult = await createWork(
+        newWorkData.title,
+        newWorkData.type,
+        newWorkData.description,
+        newWorkData.releaseYear
+      );
+
+      if (!workResult.success || !workResult.work) {
+        return {
+          success: false,
+          error: `作品の作成に失敗しました: ${workResult.error}`,
+        };
+      }
+
+      actualWorkId = workResult.work.id;
+    }
+
     // スポットデータを準備（認証ユーザーIDを設定）
     const spotData: SpotInsert = {
       ...data,
+      work_id: actualWorkId,
       submitted_by: user.id,
       is_public: data.is_public ?? true,
       view_count: 0,

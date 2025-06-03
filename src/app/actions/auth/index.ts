@@ -147,6 +147,7 @@ export async function redirectToSignIn() {
   redirect("/sign-in");
 }
 
+// 認証チェック用のServer Action
 export async function checkAuth() {
   const supabase = await createClient();
   const {
@@ -158,6 +159,7 @@ export async function checkAuth() {
   if (authError || !user) {
     redirect("/sign-in");
   }
+
   return user;
 }
 
