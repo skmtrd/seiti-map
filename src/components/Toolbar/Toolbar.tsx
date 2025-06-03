@@ -1,16 +1,15 @@
 import { getWorks } from "@/app/actions/work";
+import { SerchDrawerOpenButton } from "@/components/Toolbar/SerchDrawerOpenButton";
 import { WorkSelector } from "@/components/Toolbar/WorkSelector";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { usePreventScroll } from "@/hooks/usePreventScroll";
 import { Search } from "lucide-react";
 
 export async function Toolbar() {
@@ -24,11 +23,7 @@ export async function Toolbar() {
       </div>
       <Drawer>
         <DrawerTrigger asChild>
-          <div className="fixed bottom-25 right-6 z-50">
-            <Button size="icon" variant="default" className="shadow-lg">
-              <Search className="h-6 w-6" />
-            </Button>
-          </div>
+          <SerchDrawerOpenButton />
         </DrawerTrigger>
         <DrawerContent>
           <DrawerHeader>

@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { usePreventScroll } from "@/hooks/usePreventScroll";
 import type { SpotWithWork } from "@/types/database";
 import { Film, Landmark, MapPin } from "lucide-react";
 import Image from "next/image";
@@ -15,6 +16,13 @@ interface SpotPopupProps {
 }
 
 export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
+  // カスタムフックでスクロール無効化
+  const popupRef = usePreventScroll<HTMLDivElement>({
+    wheel: true,
+    touch: true,
+    keyboard: false, // キーボードスクロールは許可
+  });
+
   // 難易度レベルに応じた色を取得
   const getDifficultyBadgeColor = (level: number) => {
     if (level <= 2) return "bg-green-100 text-green-800 hover:bg-green-200";
@@ -90,7 +98,11 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
       closeOnClick={false}
       offset={[0, -10]}
     >
-      <Card className="w-80 border-0 shadow-xl">
+      <Card
+        ref={popupRef}
+        className="w-64 border-0 shadow-xl select-none"
+        style={{ touchAction: "none" }}
+      >
         <CardHeader>
           <div className="flex items-center gap-2">
             <Landmark className="h-5 w-5" />

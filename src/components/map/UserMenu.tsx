@@ -3,6 +3,7 @@
 import { redirectToSignIn, signOut } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { usePreventScroll } from "@/hooks/usePreventScroll";
 import { LogOut, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -16,6 +17,12 @@ export const UserMenu: React.FC<UserMenuProps> = (props) => {
   const [isSigningOut, setIsSigningOut] = useState(false);
   const router = useRouter();
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const preventScroll = usePreventScroll({
+    wheel: true,
+    touch: true,
+    keyboard: false,
+  });
 
   // メニュー外クリックで閉じる
   useEffect(() => {
@@ -55,7 +62,7 @@ export const UserMenu: React.FC<UserMenuProps> = (props) => {
   };
 
   return (
-    <div className="fixed top-6 right-6 z-50" ref={menuRef}>
+    <div className="fixed top-6 right-6 z-50" ref={preventScroll}>
       {/* アバターボタン */}
 
       {props.userAuthenticated ? (
