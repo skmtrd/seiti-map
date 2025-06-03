@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Landmark } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function CreateSpotButton() {
@@ -12,8 +13,9 @@ export function CreateSpotButton() {
 
   return (
     <div className="absolute bottom-10 right-6 z-10">
-      <Button onClick={handleCreateSpot} size="lg" variant="outline">
-        新しく聖地を作成する
+      <Button onClick={handleCreateSpot} size="lg" variant="default">
+        <Landmark className="h-6 w-6" />
+        新しく聖地を登録する
       </Button>
     </div>
   );
