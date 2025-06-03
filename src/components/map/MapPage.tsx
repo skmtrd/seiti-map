@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Map as MapGL, Marker } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
+import { CreateSpotButton } from "@/components/map/CreateSpotButton";
 import { SpotPopup } from "@/components/spots/SpotPopup";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -151,6 +152,9 @@ const RootPage = () => {
             <SpotPopup selectedSpot={selectedSpot} onClose={() => setSelectedSpot(null)} />
           )}
         </MapGL>
+
+        {/* 新規スポット作成ボタン */}
+        <CreateSpotButton />
       </div>
     </div>
   );

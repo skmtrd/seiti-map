@@ -1,5 +1,5 @@
 import { getSpots } from "@/app/actions/spot";
-import RootPage from "@/components/root/RootPage";
+import RootPage from "@/components/map/MapPage";
 
 const Page = () => {
   // const spots = await getSpots();
