@@ -161,23 +161,7 @@ export function CreateSpotForm({ works }: CreateSpotFormProps) {
         submissionFormData.set("image", formData.image);
       }
 
-      console.log("Submitting spot with FormData:", {
-        work_id: submissionFormData.get("work_id"),
-        name: submissionFormData.get("name"),
-        description: submissionFormData.get("description"),
-        latitude: submissionFormData.get("latitude"),
-        longitude: submissionFormData.get("longitude"),
-        address: submissionFormData.get("address"),
-        prefecture: submissionFormData.get("prefecture"),
-        city: submissionFormData.get("city"),
-        imageFile: formData.image
-          ? { name: formData.image.name, size: formData.image.size, type: formData.image.type }
-          : null,
-      });
-
       const result = await createSpot(submissionFormData);
-
-      console.log("CreateSpot result:", result);
 
       if (result.success) {
         setMessage({ type: "success", text: "スポットが正常に作成されました！" });

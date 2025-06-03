@@ -144,20 +144,6 @@ export async function createSpot(
       return { success: false, error: "必須項目が不足しています" };
     }
 
-    console.log("FormData extracted:", {
-      workId,
-      name,
-      description,
-      latitude,
-      longitude,
-      address,
-      prefecture,
-      city,
-      imageFile: imageFile
-        ? { name: imageFile.name, size: imageFile.size, type: imageFile.type }
-        : null,
-    });
-
     let actualWorkId = workId;
 
     // 新規作品作成が必要な場合
@@ -191,8 +177,6 @@ export async function createSpot(
     // 画像がある場合は事前にアップロード
     let imageUrl: string | null = null;
     if (imageFile && imageFile.size > 0) {
-      console.log("Starting image upload...");
-
       try {
         // ファイル名を生成（タイムスタンプ + ランダム文字列 + 元のファイル名）
         const timestamp = Date.now();
@@ -201,12 +185,6 @@ export async function createSpot(
         const fileName = `${timestamp}_${randomString}.${fileExtension}`;
         // ユーザーIDをフォルダ名として使用（RLSポリシーに準拠）
         const filePath = `${user.id}/${fileName}`;
-
-        console.log("Uploading image:", {
-          filePath,
-          fileSize: imageFile.size,
-          fileType: imageFile.type,
-        });
 
         // Supabase Storageにアップロード
         const { data: uploadData, error: uploadError } = await supabase.storage
@@ -232,7 +210,6 @@ export async function createSpot(
         }
 
         imageUrl = urlData.publicUrl;
-        console.log("Image uploaded successfully:", imageUrl);
       } catch (error) {
         console.error("Image upload error:", error);
         return { success: false, error: "画像のアップロード中にエラーが発生しました" };
@@ -275,12 +252,6 @@ export async function createSpot(
       console.error("Insert error:", insertError);
       return { success: false, error: "スポットの作成に失敗しました" };
     }
-
-    console.log("Spot created successfully:", {
-      id: spotResult.id,
-      name: spotResult.name,
-      image_url: spotResult.image_url,
-    });
 
     // キャッシュを無効化
     revalidatePath("/");

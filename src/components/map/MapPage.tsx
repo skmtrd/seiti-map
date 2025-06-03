@@ -23,11 +23,10 @@ interface MapPageProps {
   userAuthenticated: boolean;
 }
 
-const RootPage: React.FC<MapPageProps> = (props) => {
+export function MapPage(props: MapPageProps) {
   const [selectedSpot, setSelectedSpot] = useState<SpotWithWork | null>(null);
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({ limit: 50 });
 
-  console.log(props.userAuthenticated);
   const { spots, isLoading, isError, error, mutate } = useSpots(filterOptions);
 
   // 日本語対応マップスタイルのオプション
@@ -61,7 +60,7 @@ const RootPage: React.FC<MapPageProps> = (props) => {
   const defaultViewState = {
     longitude: 139.6917, // 東京の経度
     latitude: 35.6895, // 東京の緯度
-    zoom: spots.length > 0 ? 8 : 5, // スポットがある場合はズームイン
+    zoom: 10,
   };
 
   // フィルター変更ハンドラー
@@ -165,6 +164,4 @@ const RootPage: React.FC<MapPageProps> = (props) => {
       </div>
     </div>
   );
-};
-
-export default RootPage;
+}
