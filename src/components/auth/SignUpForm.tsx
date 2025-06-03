@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { CheckCircle, Mail } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -15,6 +16,8 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
   const [repeatPassword, setRepeatPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isResending, setIsResending] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,17 +34,76 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
       const result = await signUp(email, password, repeatPassword);
 
       if (result.success) {
-        // サインアップ成功時の処理は signUp 関数内で行われる
-      } else {
-        setError(result.error || "サインアップに失敗しました");
+        // サインアップ成功時に成功画面を表示
+        setIsSuccess(true);
+        return;
       }
+
+      // サインアップ自体が失敗した場合のみエラーを表示
+      setError(result.error || "サインアップに失敗しました");
     } catch (error) {
-      setError("予期しないエラーが発生しました");
+      // サインアップ処理自体でエラーが発生した場合のみ表示
+      console.error("Sign up error:", error);
+      setError("サインアップに失敗しました");
     } finally {
       setIsLoading(false);
     }
   };
 
+  // 成功画面を表示
+  if (isSuccess) {
+    return (
+      <div className={cn("flex flex-col gap-6", className)} {...props}>
+        <Card>
+          <CardHeader className="text-center">
+            <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle className="w-8 h-8 text-gray-600" />
+            </div>
+            <CardTitle className="text-2xl">確認メールを送信しました</CardTitle>
+            <CardDescription>アカウントを有効化するためにメールをご確認ください</CardDescription>
+          </CardHeader>
+          <CardContent className="text-center space-y-6">
+            <div className="space-y-3">
+              <p className="text-gray-700">
+                <strong className="text-gray-900">{email}</strong> に確認メールを送信しました。
+              </p>
+              <p className="text-gray-600">
+                メール内のリンクをクリックしてアカウントを有効化してください。
+              </p>
+            </div>
+
+            <div className="bg-gray-50 p-4 rounded-lg text-left space-y-2">
+              <div className="flex items-start gap-2">
+                <Mail className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                <div className="text-sm text-gray-600 space-y-1">
+                  <p>
+                    • メールが届かない場合は<strong>迷惑メールフォルダ</strong>をご確認ください
+                  </p>
+                  <p>
+                    • 確認メールの有効期限は<strong>24時間</strong>です
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+            )}
+
+            <div className="space-y-3">
+              <Button variant="default" asChild className="w-full">
+                <Link href="/sign-in">ログインページに戻る</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // 通常のサインアップフォーム
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>

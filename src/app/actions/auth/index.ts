@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 // サインアップのレスポンス型
@@ -17,6 +18,7 @@ export async function signUp(
   password: string,
   confirmPassword: string
 ): Promise<AuthResponse> {
+  const origin = (await headers()).get("origin");
   // パスワード確認のバリデーション
   if (password !== confirmPassword) {
     return {
@@ -31,6 +33,9 @@ export async function signUp(
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: `${origin}/sign-in`,
+      },
     });
 
     if (error) {

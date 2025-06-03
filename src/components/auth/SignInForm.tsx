@@ -24,13 +24,22 @@ export function SignInForm({ className, ...props }: React.ComponentPropsWithoutR
       const result = await signIn(email, password);
 
       if (result.success) {
-        // 成功後にホームページにリダイレクト
-        await redirectToHome();
-      } else {
-        setError(result.error || "サインインに失敗しました");
+        // 成功時はリダイレクトを試行するが、エラーがあってもユーザーには表示しない
+        try {
+          await redirectToHome();
+        } catch (redirectError) {
+          // リダイレクトエラーは無視（ブラウザの制限等で発生する可能性がある）
+          console.error("Redirect error (ignored):", redirectError);
+        }
+        return;
       }
+
+      // サインイン自体が失敗した場合のみエラーを表示
+      setError(result.error || "サインインに失敗しました");
     } catch (error) {
-      setError("予期しないエラーが発生しました");
+      // サインイン処理自体でエラーが発生した場合のみ表示
+      console.error("Sign in error:", error);
+      setError("サインインに失敗しました");
     } finally {
       setIsLoading(false);
     }
