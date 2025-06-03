@@ -1,3 +1,5 @@
+import { fetchUrl } from "@/actions/common";
+
 interface Coordinates {
   latitude: number;
   longitude: number;
@@ -149,8 +151,9 @@ function getUserFriendlyError(error: Error): string {
  */
 async function parseShortGoogleMapsUrl(url: string): Promise<ParseResult> {
   try {
-    const htmlContent = await fetch(url);
-    const coordinates = extractCoordinatesFromHtml(await htmlContent.text());
+    ("use server");
+    const htmlContent = await fetchUrl(url);
+    const coordinates = extractCoordinatesFromHtml(htmlContent);
 
     if (!coordinates) {
       return {
@@ -160,7 +163,7 @@ async function parseShortGoogleMapsUrl(url: string): Promise<ParseResult> {
       };
     }
 
-    const address = extractAddressFromHtml(await htmlContent.text());
+    const address = extractAddressFromHtml(htmlContent);
 
     return {
       success: true,
@@ -193,6 +196,9 @@ function detectGoogleMapsUrlType(url: string): "short" | "long" | "invalid" {
 
   // 長いURL形式のチェック
   if (cleanUrl.includes("google.com/maps") && cleanUrl.includes("@")) {
+    return "long";
+  }
+  if (cleanUrl.includes("google.co.jp/maps") && cleanUrl.includes("@")) {
     return "long";
   }
 
