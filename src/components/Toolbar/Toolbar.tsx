@@ -1,5 +1,5 @@
-import { getWorks } from "@/app/actions/work";
-import { SerchDrawerOpenButton } from "@/components/Toolbar/SerchDrawerOpenButton";
+"use client";
+
 import { WorkSelector } from "@/components/Toolbar/WorkSelector";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,10 +10,15 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { usePreventScroll } from "@/hooks/usePreventScroll";
+import type { Work } from "@/types/database";
 import { Search } from "lucide-react";
 
-export async function Toolbar() {
-  const works = await getWorks();
+export function Toolbar({ works }: { works: Work[] }) {
+  const preventScroll = usePreventScroll({
+    wheel: true,
+    touch: true,
+    keyboard: false,
+  });
   return (
     <>
       <div className="hidden w-96 rounded-4xl p-4 md:block">
@@ -23,7 +28,15 @@ export async function Toolbar() {
       </div>
       <Drawer>
         <DrawerTrigger asChild>
-          <SerchDrawerOpenButton />
+          <div ref={preventScroll}>
+            <Button
+              size="icon"
+              variant="default"
+              className="md:hidden fixed bottom-17 right-4 z-50"
+            >
+              <Search className="h-6 w-6" />
+            </Button>
+          </div>
         </DrawerTrigger>
         <DrawerContent>
           <DrawerHeader>

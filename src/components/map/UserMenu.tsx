@@ -62,15 +62,17 @@ export const UserMenu: React.FC<UserMenuProps> = (props) => {
   };
 
   return (
-    <div className="fixed top-6 right-6 z-50" ref={preventScroll}>
+    <div className="fixed top-4 right-4 z-50" ref={preventScroll}>
       {/* アバターボタン */}
 
       {props.userAuthenticated ? (
-        <Button onClick={() => setIsMenuOpen(!isMenuOpen)} size="icon" variant="outline">
-          <User className="text-gray-600" />
+        <Button onClick={() => setIsMenuOpen(!isMenuOpen)} size="icon" variant="default">
+          <User className="text-white" />
         </Button>
       ) : (
-        <Button onClick={() => router.push("/sign-in")}>サインインする</Button>
+        <Button onClick={() => router.push("/sign-in")} variant="default">
+          サインイン
+        </Button>
       )}
       {/* ドロップダウンメニュー */}
       {isMenuOpen && (
