@@ -11,6 +11,7 @@ interface GetSpotsOptions {
   city?: string;
   search?: string;
   limit?: number;
+  workIds?: string[]; // 作品IDの配列で絞り込み
 }
 
 export async function getSpots(options: GetSpotsOptions = {}): Promise<SpotWithWork[]> {
@@ -34,6 +35,11 @@ export async function getSpots(options: GetSpotsOptions = {}): Promise<SpotWithW
     // 市でフィルタ
     if (options.city) {
       query = query.eq("city", options.city);
+    }
+
+    // 作品IDでフィルタ（複数選択対応）
+    if (options.workIds && options.workIds.length > 0) {
+      query = query.in("work_id", options.workIds);
     }
 
     // 検索（名前または説明文で検索）

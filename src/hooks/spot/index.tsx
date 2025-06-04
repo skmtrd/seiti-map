@@ -9,6 +9,7 @@ interface GetSpotsOptions {
   city?: string;
   search?: string;
   limit?: number;
+  workIds?: string[]; // 作品IDの配列で絞り込み
 }
 
 // SWR用のキー生成関数

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useMemo, useState } from "react";
 import { Map as MapGL, Marker } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { CreateSpotButton } from "@/components/map/CreateSpotButton";
@@ -17,6 +18,7 @@ interface FilterOptions {
   city?: string;
   search?: string;
   limit?: number;
+  workIds?: string[];
 }
 
 interface MapPageProps {
@@ -26,8 +28,26 @@ interface MapPageProps {
 export function MapPage(props: MapPageProps) {
   const [selectedSpot, setSelectedSpot] = useState<SpotWithWork | null>(null);
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({ limit: 50 });
+  const searchParams = useSearchParams();
 
-  const { spots, isLoading, isError, error, mutate } = useSpots(filterOptions);
+  // URLクエリパラメータからworksを取得してworkIdsに変換
+  const workIdsFromUrl = useMemo(() => {
+    const worksParam = searchParams.get("works");
+    if (!worksParam) return undefined;
+
+    // カンマ区切りで分割し、空文字列を除外
+    return worksParam.split(",").filter((id) => id.trim().length > 0);
+  }, [searchParams]);
+
+  // URLのworkIdsとフィルターオプションを結合
+  const combinedFilterOptions = useMemo(() => {
+    return {
+      ...filterOptions,
+      workIds: workIdsFromUrl,
+    };
+  }, [filterOptions, workIdsFromUrl]);
+
+  const { spots, isError, error, mutate } = useSpots(combinedFilterOptions);
 
   // 日本語対応マップスタイルのオプション
   const mapStyles = {
@@ -113,18 +133,6 @@ export function MapPage(props: MapPageProps) {
             display: none !important;
           }
         `}</style>
-
-        {/* ローディング表示 */}
-        {isLoading && (
-          <div className="absolute top-4 left-4 z-10">
-            <Card className="p-4">
-              <div className="flex items-center gap-2 text-blue-600">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span className="text-sm">スポットを読み込み中...</span>
-              </div>
-            </Card>
-          </div>
-        )}
 
         <MapGL
           initialViewState={defaultViewState}
