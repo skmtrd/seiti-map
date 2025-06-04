@@ -100,17 +100,19 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
     >
       <Card
         ref={popupRef}
-        className="w-64 border-0 shadow-xl select-none"
+        className="w-52 sm:w-96 border-0 shadow-xl select-none p-4 sm:p-6"
         style={{ touchAction: "none" }}
       >
-        <CardHeader>
+        <CardHeader className="p-0">
           <div className="flex items-center gap-2">
             <Landmark className="h-5 w-5" />
-            <CardTitle className="font-bold text-gray-900 text-lg">{selectedSpot.name}</CardTitle>
+            <CardTitle className="font-bold text-gray-900 text-sm sm:text-lg">
+              {selectedSpot.name}
+            </CardTitle>
           </div>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="p-0">
           {/* 作品情報の表示 */}
           {selectedSpot.works && (
             <div className="flex gap-2 flex-col">
@@ -147,7 +149,7 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
           )}
         </CardContent>
 
-        <CardFooter>
+        <CardFooter className="p-0">
           <Button
             asChild
             variant="default"
@@ -155,7 +157,7 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
           >
             <a href={getGoogleMapsUrl()} target="_blank" rel="noopener noreferrer">
               <MapPin className="h-5 w-5 text-white drop-shadow-sm" />
-              <span className="tracking-wide">Google Mapで開く</span>
+              <span className="tracking-wide">Google Map</span>
             </a>
           </Button>
         </CardFooter>

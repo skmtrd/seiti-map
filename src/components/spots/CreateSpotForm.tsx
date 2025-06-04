@@ -10,7 +10,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { parseGoogleMapsUrl } from "@/functions/mapUrlparser";
 import type { Work } from "@/types/database";
 import { Camera, Check, FileText, Link, Loader2, MapPin, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { type ChangeEvent, type FormEvent, useState } from "react";
+import { toast } from "sonner";
 
 interface CreateSpotFormProps {
   works: Work[];
@@ -31,6 +33,7 @@ export function CreateSpotForm({ works }: CreateSpotFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [isNewWork, setIsNewWork] = useState(false);
+  const router = useRouter();
 
   // 新しい機能用のstate
   const [formData, setFormData] = useState<FormData>({
@@ -189,7 +192,9 @@ export function CreateSpotForm({ works }: CreateSpotFormProps) {
     } catch (error) {
       setMessage({ type: "error", text: "予期しないエラーが発生しました" });
     } finally {
+      toast.success("聖地が作成されました");
       setIsSubmitting(false);
+      router.push("/");
     }
   }
 
@@ -276,25 +281,6 @@ export function CreateSpotForm({ works }: CreateSpotFormProps) {
 
   return (
     <div className="space-y-6">
-      {/* 使用方法の説明 */}
-      <Alert>
-        <AlertDescription>
-          <div>
-            <h3 className="mb-2 font-medium">座標取得について（両方の形式に対応）</h3>
-            <div className="space-y-1 text-sm">
-              <p>
-                • <strong>短縮URL</strong>: スマホのGoogle Mapsから「共有」→「リンクをコピー」
-              </p>
-              <p>
-                • <strong>長いURL</strong>: PCのGoogle Mapsから場所のURLをコピー
-              </p>
-              <p>• どちらの形式も同じURL欄に貼り付けて「URL解析」で自動処理</p>
-              <p>• 座標と住所情報を自動取得します</p>
-            </div>
-          </div>
-        </AlertDescription>
-      </Alert>
-
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
