@@ -21,7 +21,6 @@ export const useGetUserLocation = () => {
     }
 
     setIsLoadingLocation(true);
-
     // watchPositionでリアルタイム位置追跡
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
@@ -55,8 +54,6 @@ export const useGetUserLocation = () => {
       },
       {
         enableHighAccuracy: true, // GPS使用で高精度・向き取得
-        timeout: 15000, // 15秒タイムアウト
-        maximumAge: 60000, // 1分間キャッシュ
       }
     );
 
