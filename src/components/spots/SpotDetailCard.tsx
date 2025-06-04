@@ -59,13 +59,6 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spot }) => {
             </div>
           )}
 
-          {/* シーン説明（詳細2） */}
-          {spot.scene_description && (
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-              <p className="whitespace-pre-wrap">{spot.scene_description}</p>
-            </div>
-          )}
-
           {/* 埋め込みマップ */}
           {(spot.latitude && spot.longitude) || spot.address ? (
             <div className="space-y-2">
