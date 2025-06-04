@@ -20,5 +20,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-
 module.exports = withPWA(nextConfig);

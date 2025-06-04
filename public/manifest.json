@@ -2,7 +2,7 @@
   "name": "Timetable Share",
   "short_name": "Timetable Share",
   "description": "Timetable Share",
-  "start_url": "/profile",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
