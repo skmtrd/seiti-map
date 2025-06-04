@@ -3,7 +3,7 @@
 import { redirectToSignIn, signOut } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { usePreventScroll } from "@/hooks/usePreventScroll";
+import { usePreventScroll } from "@/hooks/common/usePreventScroll";
 import { LogOut, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";

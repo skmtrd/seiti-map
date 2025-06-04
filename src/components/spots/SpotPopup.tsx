@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { usePreventScroll } from "@/hooks/usePreventScroll";
+import { usePreventScroll } from "@/hooks/common/usePreventScroll";
 import type { SpotWithWork } from "@/types/database";
 import { Film, Landmark, MapPin } from "lucide-react";
 import Image from "next/image";

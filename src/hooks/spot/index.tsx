@@ -2,6 +2,8 @@
 
 import { getCitiesByPrefecture, getPrefectures, getSpots } from "@/app/actions/spot";
 import type { SpotWithWork } from "@/types/database";
+import { useSearchParams } from "next/navigation";
+import { useMemo } from "react";
 import useSWR from "swr";
 
 interface GetSpotsOptions {
@@ -51,71 +53,18 @@ export function useSpots(options: GetSpotsOptions = {}) {
   };
 }
 
-// 都道府県一覧を取得するhook
-export function usePrefectures() {
-  const { data, error, isLoading, mutate } = useSWR("prefectures", prefecturesWrapper, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-    // 都道府県は頻繁に変わらないので長時間キャッシュ
-    dedupingInterval: 300000, // 5分間のデデュープ
-  });
+export const useSpotsWithQuery = () => {
+  const searchParams = useSearchParams();
+  // URLクエリパラメータからworksを取得してworkIdsに変換
+  const workIdsFromUrl = useMemo(() => {
+    const worksParam = searchParams.get("works");
+    if (!worksParam) return undefined;
 
-  return {
-    prefectures: data || [],
-    isLoading,
-    isError: !!error,
-    error: error?.message || null,
-    mutate,
-  };
-}
+    // カンマ区切りで分割し、空文字列を除外
+    return worksParam.split(",").filter((id) => id.trim().length > 0);
+  }, [searchParams]);
 
-// 指定した都道府県の市区町村一覧を取得するhook
-export function useCitiesByPrefecture(prefecture: string | null) {
-  const { data, error, isLoading, mutate } = useSWR(
-    prefecture ? `cities-${prefecture}` : null,
-    prefecture ? () => citiesWrapper(prefecture) : null,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      // 市区町村も頻繁に変わらないので長時間キャッシュ
-      dedupingInterval: 300000, // 5分間のデデュープ
-    }
-  );
+  const { spots, isError, error, mutate } = useSpots({ workIds: workIdsFromUrl });
 
-  return {
-    cities: data || [],
-    isLoading,
-    isError: !!error,
-    error: error?.message || null,
-    mutate,
-  };
-}
-
-// 複数の都道府県の市区町村を一度に取得するhook
-export function useMultipleCities(prefectures: string[]) {
-  const results = prefectures.map((prefecture) => useCitiesByPrefecture(prefecture));
-
-  const isLoading = results.some((result) => result.isLoading);
-  const isError = results.some((result) => result.isError);
-  const errors = results.filter((result) => result.error).map((result) => result.error);
-
-  const citiesByPrefecture = prefectures.reduce(
-    (acc, prefecture, index) => {
-      acc[prefecture] = results[index].cities;
-      return acc;
-    },
-    {} as Record<string, string[]>
-  );
-
-  return {
-    citiesByPrefecture,
-    isLoading,
-    isError,
-    errors,
-    mutate: () => {
-      for (const result of results) {
-        result.mutate();
-      }
-    },
-  };
-}
+  return { spots, isError, error, mutate };
+};

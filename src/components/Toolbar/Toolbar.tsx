@@ -9,7 +9,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { usePreventScroll } from "@/hooks/usePreventScroll";
+import { usePreventScroll } from "@/hooks/common/usePreventScroll";
 import type { Work } from "@/types/database";
 import { Search } from "lucide-react";
 

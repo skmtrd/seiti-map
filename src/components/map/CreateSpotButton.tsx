@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { usePreventScroll } from "@/hooks/usePreventScroll";
+import { usePreventScroll } from "@/hooks/common/usePreventScroll";
 import { Landmark } from "lucide-react";
 import { useRouter } from "next/navigation";
 

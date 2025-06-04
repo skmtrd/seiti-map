@@ -1,92 +1,39 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
-import { Map as MapGL, Marker } from "react-map-gl/maplibre";
+import { useMemo } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { CreateSpotButton } from "@/components/map/CreateSpotButton";
 import { UserMenu } from "@/components/map/UserMenu";
-import { SpotPopup } from "@/components/spots/SpotPopup";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useSpots } from "@/hooks/spot";
-import type { SpotWithWork } from "@/types/database";
-import { AlertCircle, Loader2, MapPin } from "lucide-react";
-
-interface FilterOptions {
-  prefecture?: string;
-  city?: string;
-  search?: string;
-  limit?: number;
-  workIds?: string[];
-}
+import { useGetUserLocation } from "@/hooks/map/getUserLocation";
+import { useSpotsWithQuery } from "@/hooks/spot";
+import { AlertCircle, Loader2, MapPin, Navigation } from "lucide-react";
+import { MainMap } from "./MainMap";
 
 interface MapPageProps {
   userAuthenticated: boolean;
 }
 
 export function MapPage(props: MapPageProps) {
-  const [selectedSpot, setSelectedSpot] = useState<SpotWithWork | null>(null);
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>({ limit: 50 });
-  const searchParams = useSearchParams();
+  const { userLocation, locationError, isLoadingLocation } = useGetUserLocation();
+  const { spots, isError, error, mutate } = useSpotsWithQuery();
 
-  // URLクエリパラメータからworksを取得してworkIdsに変換
-  const workIdsFromUrl = useMemo(() => {
-    const worksParam = searchParams.get("works");
-    if (!worksParam) return undefined;
-
-    // カンマ区切りで分割し、空文字列を除外
-    return worksParam.split(",").filter((id) => id.trim().length > 0);
-  }, [searchParams]);
-
-  // URLのworkIdsとフィルターオプションを結合
-  const combinedFilterOptions = useMemo(() => {
+  // デフォルトの表示位置（現在位置があればそれを使用、なければ東京）
+  const defaultViewState = useMemo(() => {
+    if (userLocation) {
+      return {
+        longitude: userLocation.longitude,
+        latitude: userLocation.latitude,
+        zoom: 12,
+      };
+    }
     return {
-      ...filterOptions,
-      workIds: workIdsFromUrl,
+      longitude: 139.6917, // 東京の経度
+      latitude: 35.6895, // 東京の緯度
+      zoom: 10,
     };
-  }, [filterOptions, workIdsFromUrl]);
-
-  const { spots, isError, error, mutate } = useSpots(combinedFilterOptions);
-
-  // 日本語対応マップスタイルのオプション
-  const mapStyles = {
-    // OpenStreetMap Japan（無料・完全日本語対応）
-    osmJapan: "https://tile.openstreetmap.jp/styles/osm-bright-ja/style.json",
-
-    // MapTiler（APIキー必要・多言語対応）
-    // mapTilerJa: "https://api.maptiler.com/maps/streets/style.json?key=YOUR_API_KEY&language=ja",
-
-    // 国土地理院ベクトルタイル（日本政府公式）
-    // gsiJapan: "https://maps.gsi.go.jp/vector/style.json"
-  };
-
-  // 難易度レベルに応じた色を取得
-  const getDifficultyColor = (level: number) => {
-    if (level <= 2) return "bg-green-500 hover:bg-green-600";
-    if (level <= 3) return "bg-yellow-500 hover:bg-yellow-600";
-    if (level <= 4) return "bg-orange-500 hover:bg-orange-600";
-    return "bg-red-500 hover:bg-red-600";
-  };
-
-  const getDifficultyLabel = (level: number) => {
-    if (level <= 2) return "易しい";
-    if (level <= 3) return "普通";
-    if (level <= 4) return "難しい";
-    return "非常に難しい";
-  };
-
-  // デフォルトの表示位置（日本の中心付近）
-  const defaultViewState = {
-    longitude: 139.6917, // 東京の経度
-    latitude: 35.6895, // 東京の緯度
-    zoom: 10,
-  };
-
-  // フィルター変更ハンドラー
-  const handleFilterChange = (newFilters: FilterOptions) => {
-    setFilterOptions(newFilters);
-  };
+  }, [userLocation]);
 
   // エラー状態の表示
   if (isError) {
@@ -115,61 +62,10 @@ export function MapPage(props: MapPageProps) {
   return (
     <div className="flex h-screen">
       {/* メインマップエリア */}
-      <div className="flex-1 relative">
-        {/* Popup のデフォルトスタイルをオーバーライド */}
-        <style>{`
-          .maplibregl-popup-content {
-            background: transparent !important;
-            border: none !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
-            padding: 0 !important;
-            max-width: none !important;
-          }
-          .maplibregl-popup-tip {
-            display: none !important;
-          }
-          .maplibregl-popup-close-button {
-            display: none !important;
-          }
-        `}</style>
-
-        <MapGL
-          initialViewState={defaultViewState}
-          style={{ width: "100%", height: "100%" }}
-          mapStyle={mapStyles.osmJapan}
-          onClick={() => setSelectedSpot(null)}
-        >
-          {spots.map((spot) => (
-            <Marker
-              key={spot.id}
-              longitude={spot.longitude}
-              latitude={spot.latitude}
-              anchor="bottom"
-            >
-              <Button
-                variant="default"
-                size="sm"
-                className="bg-green-500 hover:bg-green-600 h-10 w-10 rounded-full border-2 border-white p-0 shadow-lg transition-all duration-200 hover:scale-110"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedSpot(spot);
-                }}
-              >
-                <MapPin className="h-5 w-5 text-white" />
-              </Button>
-            </Marker>
-          ))}
-
-          {selectedSpot && (
-            <SpotPopup selectedSpot={selectedSpot} onClose={() => setSelectedSpot(null)} />
-          )}
-        </MapGL>
-
-        {/* 浮遊配置系ボタン */}
-        <CreateSpotButton />
-        <UserMenu userAuthenticated={props.userAuthenticated} />
-      </div>
+      <MainMap initialMapState={defaultViewState} userLocation={userLocation} spots={spots} />
+      {/* 浮遊配置系ボタン */}
+      <CreateSpotButton />
+      <UserMenu userAuthenticated={props.userAuthenticated} />
     </div>
   );
 }
