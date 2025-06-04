@@ -3,7 +3,7 @@
 import { createWork } from "@/app/actions/work";
 import { supabase } from "@/lib/supabase";
 import { createClient } from "@/lib/supabase/server";
-import type { SpotInsert, SpotWithWork } from "@/types/database";
+import type { Spot, SpotInsert, SpotWithWork } from "@/types/database";
 import { revalidatePath } from "next/cache";
 
 interface GetSpotsOptions {
@@ -69,45 +69,23 @@ export async function getSpots(options: GetSpotsOptions = {}): Promise<SpotWithW
   }
 }
 
-// 都道府県の一覧を取得する関数
-export async function getPrefectures(): Promise<string[]> {
-  try {
-    const { data, error } = await supabase.from("spots").select("prefecture").order("prefecture");
-
-    if (error) {
-      console.error("Error fetching prefectures:", error);
-      throw new Error("都道府県の取得に失敗しました");
-    }
-
-    // ユニークな都道府県のリストを作成
-    const uniquePrefectures = [...new Set(data?.map((item) => item.prefecture) || [])];
-    return uniquePrefectures;
-  } catch (error) {
-    console.error("getPrefectures error:", error);
-    throw new Error("都道府県の取得中にエラーが発生しました");
-  }
-}
-
-// 指定した都道府県の市の一覧を取得する関数
-export async function getCitiesByPrefecture(prefecture: string): Promise<string[]> {
+export async function getSpotDetail(spotId: string): Promise<Spot> {
   try {
     const { data, error } = await supabase
       .from("spots")
-      .select("city")
-      .eq("prefecture", prefecture)
-      .order("city");
+      .select("*, works (id, title, type, description, release_year)")
+      .eq("id", spotId)
+      .single();
 
     if (error) {
-      console.error("Error fetching cities:", error);
-      throw new Error("市区町村の取得に失敗しました");
+      console.error("Error fetching spots:", error);
+      throw new Error("スポットの取得に失敗しました");
     }
 
-    // ユニークな市のリストを作成
-    const uniqueCities = [...new Set(data?.map((item) => item.city) || [])];
-    return uniqueCities;
+    return data || null;
   } catch (error) {
-    console.error("getCitiesByPrefecture error:", error);
-    throw new Error("市区町村の取得中にエラーが発生しました");
+    console.error("getSpots error:", error);
+    throw new Error("スポットの取得中にエラーが発生しました");
   }
 }
 

@@ -7,6 +7,7 @@ import { usePreventScroll } from "@/hooks/common/usePreventScroll";
 import type { SpotWithWork } from "@/types/database";
 import { Film, Landmark, MapPin } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { Popup } from "react-map-gl/maplibre";
 import { Spacer } from "../common/Spacer";
 
@@ -150,16 +151,27 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
         </CardContent>
 
         <CardFooter className="p-0">
-          <Button
-            asChild
-            variant="default"
-            className="w-full flex items-center justify-center gap-2 text-base"
-          >
-            <a href={getGoogleMapsUrl()} target="_blank" rel="noopener noreferrer">
-              <MapPin className="h-5 w-5 text-white drop-shadow-sm" />
-              <span className="tracking-wide">Google Map</span>
-            </a>
-          </Button>
+          <div className="w-full flex justify-center items-center flex-col sm:flex-row gap-2">
+            <Button
+              asChild
+              variant="default"
+              className="w-full sm:w-1/2 flex items-center justify-center gap-2 text-base"
+            >
+              <a href={getGoogleMapsUrl()} target="_blank" rel="noopener noreferrer">
+                <MapPin className="h-5 w-5 text-white drop-shadow-sm" />
+                <span className="tracking-wide">Google Map</span>
+              </a>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="w-full sm:w-1/2 flex items-center justify-center gap-2 text-base"
+            >
+              <Link href={`/${selectedSpot.id}`} rel="noopener noreferrer">
+                <span className="tracking-wide">詳細</span>
+              </Link>
+            </Button>
+          </div>
         </CardFooter>
       </Card>
     </Popup>

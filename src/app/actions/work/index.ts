@@ -26,6 +26,22 @@ export async function getWorks(): Promise<Work[]> {
   }
 }
 
+export async function getWorkDetail(workId: string): Promise<Work> {
+  try {
+    const { data, error } = await supabase.from("works").select("*").eq("id", workId).single();
+
+    if (error) {
+      console.error("Error fetching work detail:", error);
+      throw new Error("作品の取得に失敗しました");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("getWorkDetail error:", error);
+    throw new Error("作品の取得中にエラーが発生しました");
+  }
+}
+
 // 新しい作品を作成する関数
 export async function createWork(
   title: string,

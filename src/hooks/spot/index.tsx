@@ -1,6 +1,6 @@
 "use client";
 
-import { getCitiesByPrefecture, getPrefectures, getSpots } from "@/app/actions/spot";
+import { getSpots } from "@/app/actions/spot";
 import type { SpotWithWork } from "@/types/database";
 import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
@@ -24,14 +24,6 @@ const createSpotsKey = (options: GetSpotsOptions = {}) => {
 const spotsWrapper = async (key: string): Promise<SpotWithWork[]> => {
   const [, options] = JSON.parse(key);
   return await getSpots(options);
-};
-
-const prefecturesWrapper = async (): Promise<string[]> => {
-  return await getPrefectures();
-};
-
-const citiesWrapper = async (prefecture: string): Promise<string[]> => {
-  return await getCitiesByPrefecture(prefecture);
 };
 
 // スポット一覧を取得するhook
