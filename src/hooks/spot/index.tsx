@@ -94,7 +94,7 @@ export const useSpotUpdate = (spot: Spot) => {
   const onSubmit = async (data: formSchema) => {
     try {
       const submissionFormData = new FormData();
-      submissionFormData.set("name", spot.name);
+      submissionFormData.set("name", data.name);
       submissionFormData.set("description", data.description || "");
       if (selectedImage) {
         submissionFormData.set("image", selectedImage);
