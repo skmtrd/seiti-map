@@ -61,6 +61,7 @@ export const MainMap: React.FC<MainMapProps> = (props) => {
         {/* 現在位置のマーカー */}
         {props.userLocation && (
           <Marker
+            style={{ zIndex: 10 }}
             longitude={props.userLocation.longitude}
             latitude={props.userLocation.latitude}
             anchor="center"
@@ -76,7 +77,13 @@ export const MainMap: React.FC<MainMapProps> = (props) => {
 
         {/* スポットのマーカー */}
         {props.spots.map((spot) => (
-          <Marker key={spot.id} longitude={spot.longitude} latitude={spot.latitude} anchor="bottom">
+          <Marker
+            key={spot.id}
+            longitude={spot.longitude}
+            latitude={spot.latitude}
+            anchor="bottom"
+            style={{ zIndex: 9 }}
+          >
             <Button
               variant="default"
               size="sm"
