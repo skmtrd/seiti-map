@@ -7,6 +7,7 @@ import { useSpotUpdate } from "@/hooks/spot";
 import type { Spot } from "@/types/database";
 import { ExternalLink, FileText, Landmark, Upload, X } from "lucide-react";
 import Image from "next/image";
+import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
 interface SpotDetailCardProps {
@@ -41,14 +42,18 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spot }) => {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Landmark className="h-5 w-5" />
-              {spot.name}
+            <CardTitle className="flex items-center w-full">
+              {!isEditMode && (
+                <>
+                  <Landmark className="h-5 w-5" />
+                  {spot.name}
+                </>
+              )}
             </CardTitle>
 
             <div className="flex items-center">
               {isEditMode && (
-                <Button size="icon" variant="ghost" onClick={handleCancelButton}>
+                <Button size="smIcon" variant="ghost" onClick={handleCancelButton}>
                   <X className="h-4 w-4" />
                 </Button>
               )}
@@ -63,7 +68,24 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spot }) => {
               </Button>
             </div>
           </div>
+          {isEditMode && (
+            <div className="space-y-2 w-full">
+              <Label htmlFor="name" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                スポット名
+              </Label>
+              <Input
+                id="name"
+                {...form.register("name")}
+                placeholder="例：神社の鳥居、学校の屋上、東京駅など"
+                required
+                className="w-full"
+              />
+            </div>
+          )}
         </CardHeader>
+        {/* スポット名編集 */}
+
         <CardContent className="space-y-6">
           {/* 画像 */}
           <div className="space-y-2">
