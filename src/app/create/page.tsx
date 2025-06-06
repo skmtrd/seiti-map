@@ -2,7 +2,7 @@ import { checkAuth } from "@/actions/auth";
 import { getWorks } from "@/actions/work";
 import { PageBackButton } from "@/components/common/PageBackButton";
 import { Spacer } from "@/components/common/Spacer";
-import { CreateSpotForm } from "@/components/spots/CreateSpotForm";
+import { CreateSpotForm } from "@/components/create/CreateSpotForm";
 
 export default async function CreatePage() {
   await checkAuth();

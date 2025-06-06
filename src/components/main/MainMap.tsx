@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { Map as MapGL, Marker } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { SpotPopup } from "@/components/spots/SpotPopup";
+import { SpotPopup } from "@/components/main/SpotPopup";
 import { Button } from "@/components/ui/button";
-import type { UserLocation } from "@/hooks/map/getUserLocation";
+import type { UserLocation } from "@/hooks/main/getUserLocation";
 import type { SpotWithWork } from "@/types/database";
 import { MapPin } from "lucide-react";
 

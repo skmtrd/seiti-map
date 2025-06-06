@@ -2,14 +2,14 @@
 
 import { useMemo } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { CreateSpotButton } from "@/components/map/CreateSpotButton";
-import { UserMenu } from "@/components/map/UserMenu";
+import { CreateSpotButton } from "@/components/main/CreateSpotButton";
+import { UserMenu } from "@/components/main/UserMenu";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useGetUserLocation } from "@/hooks/map/getUserLocation";
-import { useSpotsWithQuery } from "@/hooks/spot";
+import { useGetUserLocation } from "@/hooks/main/getUserLocation";
+import { useSpotsWithQuery } from "@/hooks/spot/useSpots";
 import { AlertCircle, Loader2, MapPin, Navigation } from "lucide-react";
-import { MainMap } from "./MainMap";
+import { MainMap } from "../main/MainMap";
 
 interface MapPageProps {
   userAuthenticated: boolean;

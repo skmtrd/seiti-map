@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { parseGoogleMapsUrl } from "@/functions/mapUrlParser";
 import type { Work } from "@/types/database";
-import { Camera, Check, FileText, Link, Loader2, MapPin, X } from "lucide-react";
+import { Camera, FileText, Link, Loader2, MapPin, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type ChangeEvent, type FormEvent, useState } from "react";
 import { toast } from "sonner";

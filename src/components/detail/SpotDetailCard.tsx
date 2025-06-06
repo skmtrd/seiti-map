@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { useSpotUpdate } from "@/hooks/spot";
+import { useSpotUpdateForm } from "@/hooks/detail/useSpotUpdateForm";
 import type { Spot } from "@/types/database";
 import { ExternalLink, FileText, Landmark, Upload, X } from "lucide-react";
 import Image from "next/image";
@@ -23,7 +23,7 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spot }) => {
     isEditMode,
     selectedImage,
     handleCancelButton,
-  } = useSpotUpdate(spot);
+  } = useSpotUpdateForm(spot);
 
   const getGoogleMapsUrl = () => {
     if (spot.latitude && spot.longitude) {

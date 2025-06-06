@@ -2,7 +2,7 @@ import { checkAuth } from "@/actions/auth";
 import { getSpotDetail } from "@/actions/spot";
 import { PageBackButton } from "@/components/common/PageBackButton";
 import { Spacer } from "@/components/common/Spacer";
-import { SpotDetailCard } from "@/components/spots/SpotDetailCard";
+import { SpotDetailCard } from "@/components/detail/SpotDetailCard";
 
 export default async function SpotDetailPage({
   params,
