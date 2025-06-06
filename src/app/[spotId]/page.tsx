@@ -1,4 +1,4 @@
-import { checkAuth } from "@/actions/auth";
+import { getUser } from "@/actions/auth";
 import { getSpotDetail } from "@/actions/spot";
 import { PageBackButton } from "@/components/common/PageBackButton";
 import { Spacer } from "@/components/common/Spacer";
@@ -11,14 +11,13 @@ export default async function SpotDetailPage({
 }) {
   const { spotId } = await params;
 
-  await checkAuth();
-
   const spot = await getSpotDetail(spotId);
+  const user = await getUser();
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
       <Spacer height={10} />
-      <SpotDetailCard spot={spot} />
+      <SpotDetailCard spot={spot} userAuthenticated={user !== null} />
       <PageBackButton />
     </div>
   );

@@ -12,9 +12,10 @@ import { Label } from "../ui/label";
 
 interface SpotDetailCardProps {
   spot: Spot;
+  userAuthenticated: boolean;
 }
 
-export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spot }) => {
+export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spot, userAuthenticated }) => {
   const {
     form,
     handleEditButton,
@@ -51,22 +52,24 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spot }) => {
               )}
             </CardTitle>
 
-            <div className="flex items-center">
-              {isEditMode && (
-                <Button size="smIcon" variant="ghost" onClick={handleCancelButton}>
-                  <X className="h-4 w-4" />
+            {userAuthenticated && (
+              <div className="flex items-center">
+                {isEditMode && (
+                  <Button size="smIcon" variant="ghost" onClick={handleCancelButton}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+                <Button
+                  size="sm"
+                  variant={isEditMode ? "default" : "outline"}
+                  onClick={() => {
+                    handleEditButton();
+                  }}
+                >
+                  {isEditMode ? "保存" : "編集"}
                 </Button>
-              )}
-              <Button
-                size="sm"
-                variant={isEditMode ? "default" : "outline"}
-                onClick={() => {
-                  handleEditButton();
-                }}
-              >
-                {isEditMode ? "保存" : "編集"}
-              </Button>
-            </div>
+              </div>
+            )}
           </div>
           {isEditMode && (
             <div className="space-y-2 w-full">

@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { getWorks } from "@/actions/work";
 import { Toolbar } from "@/components/Toolbar/Toolbar";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 
 const geistSans = Geist({
