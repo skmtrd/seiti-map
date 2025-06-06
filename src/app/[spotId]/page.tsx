@@ -1,5 +1,5 @@
-import { checkAuth } from "@/app/actions/auth";
-import { getSpotDetail } from "@/app/actions/spot";
+import { checkAuth } from "@/actions/auth";
+import { getSpotDetail } from "@/actions/spot";
 import { PageBackButton } from "@/components/common/PageBackButton";
 import { Spacer } from "@/components/common/Spacer";
 import { SpotDetailCard } from "@/components/spots/SpotDetailCard";

@@ -1,4 +1,4 @@
-import { getUser } from "@/app/actions/auth";
+import { getUser } from "@/actions/auth";
 import { MapPage } from "@/components/map/MapPage";
 
 const Page = async () => {

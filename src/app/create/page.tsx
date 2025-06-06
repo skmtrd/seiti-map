@@ -1,5 +1,5 @@
-import { checkAuth } from "@/app/actions/auth";
-import { getWorks } from "@/app/actions/work";
+import { checkAuth } from "@/actions/auth";
+import { getWorks } from "@/actions/work";
 import { PageBackButton } from "@/components/common/PageBackButton";
 import { Spacer } from "@/components/common/Spacer";
 import { CreateSpotForm } from "@/components/spots/CreateSpotForm";

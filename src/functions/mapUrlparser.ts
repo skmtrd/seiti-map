@@ -1,4 +1,4 @@
-import { fetchUrl } from "@/actions/common";
+import { fetchUrl } from "@/actions/common/index";
 
 interface Coordinates {
   latitude: number;

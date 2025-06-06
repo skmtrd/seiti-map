@@ -1,7 +1,6 @@
 "use client";
 
-import { getSpots, updateSpot } from "@/app/actions/spot";
-import { Button } from "@/components/ui/button";
+import { getSpots, updateSpot } from "@/actions/spot";
 import type { Spot, SpotWithWork } from "@/types/database";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";

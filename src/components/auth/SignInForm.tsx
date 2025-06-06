@@ -1,6 +1,6 @@
 "use client";
 
-import { redirectToHome, signIn } from "@/app/actions/auth";
+import { redirectToHome, signIn } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";

@@ -1,6 +1,6 @@
 "use client";
 
-import { redirectToSignIn, signOut } from "@/app/actions/auth";
+import { redirectToSignIn, signOut } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { usePreventScroll } from "@/hooks/common/usePreventScroll";
