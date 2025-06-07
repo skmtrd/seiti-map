@@ -32,8 +32,8 @@ export default async function RootLayout({
     <div className="flex h-screen">
       <Suspense>
         <Toolbar works={works} />
+        <div className="flex-1">{children}</div>
       </Suspense>
-      <div className="flex-1">{children}</div>
       {/* 浮遊配置系ボタン */}
       <CreateSpotButton />
       <UserMenu />
