@@ -102,6 +102,44 @@ export type Database = {
           updated_at?: string;
         };
       };
+      comments: {
+        Row: {
+          id: string;
+          spot_id: string;
+          user_id: string;
+          content: string;
+          image_url_1: string | null;
+          image_url_2: string | null;
+          image_url_3: string | null;
+          image_url_4: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          spot_id: string;
+          user_id: string;
+          content: string;
+          image_url_1?: string | null;
+          image_url_2?: string | null;
+          image_url_3?: string | null;
+          image_url_4?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          spot_id?: string;
+          user_id?: string;
+          content?: string;
+          image_url_1?: string | null;
+          image_url_2?: string | null;
+          image_url_3?: string | null;
+          image_url_4?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
     Views: {
       [_ in never]: never;
@@ -118,10 +156,19 @@ export type Database = {
 // 便利な型定義
 export type Spot = Database["public"]["Tables"]["spots"]["Row"];
 export type Work = Database["public"]["Tables"]["works"]["Row"];
+export type Comment = Database["public"]["Tables"]["comments"]["Row"];
 export type SpotInsert = Database["public"]["Tables"]["spots"]["Insert"];
 export type WorkInsert = Database["public"]["Tables"]["works"]["Insert"];
+export type CommentInsert = Database["public"]["Tables"]["comments"]["Insert"];
 
 // JOINした結果の型定義
 export type SpotWithWork = Spot & {
   works: Work;
+};
+
+export type CommentWithUser = Comment & {
+  user_profiles?: {
+    display_name: string | null;
+    avatar_url: string | null;
+  };
 };
