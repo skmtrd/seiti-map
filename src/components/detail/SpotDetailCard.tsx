@@ -9,8 +9,8 @@ import { useSpotDetail } from "@/hooks/spot/useSpotDetail";
 import { useGetUser } from "@/hooks/user/useGetUser";
 import { ExternalLink, FileText, Landmark, Upload, X } from "lucide-react";
 import Image from "next/image";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { Skeleton } from "../ui/skeleton";
 
 interface SpotDetailCardProps {
@@ -19,15 +19,8 @@ interface SpotDetailCardProps {
 
 export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spotId }) => {
   const { spot, isLoading, isError, error } = useSpotDetail(spotId);
-  const {
-    form,
-    handleEditButton,
-    handleImageSelect,
-    previewUrl,
-    isEditMode,
-    selectedImage,
-    handleCancelButton,
-  } = useSpotUpdateForm(spot);
+  const { form, handleEditButton, handleImageSelect, previewUrl, isEditMode, handleCancelButton } =
+    useSpotUpdateForm(spot, spotId);
 
   const { user, isLoading: isUserLoading, isError: isUserError, error: userError } = useGetUser();
   const userAuthenticated = user !== null;
@@ -68,19 +61,24 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spotId }) => {
             )}
           </div>
           {isEditMode && (
-            <div className="space-y-2 w-full">
-              <Label htmlFor="name" className="flex items-center gap-2">
-                <Landmark className="h-4 w-4" />
-                聖地名
-              </Label>
-              <Input
-                id="name"
-                {...form.register("name")}
-                placeholder="例：神社の鳥居、学校の屋上、東京駅など"
-                required
-                className="w-full"
+            <Form {...form}>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Landmark className="h-4 w-4" />
+                      聖地名
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="例：神社の鳥居、学校の屋上、東京駅など" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
+            </Form>
           )}
         </CardHeader>
         {/* スポット名編集 */}
@@ -105,45 +103,64 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spotId }) => {
             )}
 
             {isEditMode && (
-              <div className="flex items-center w-full justify-end gap-2">
-                {selectedImage && (
-                  <p className="text-sm text-gray-600">選択済み: {selectedImage.name}</p>
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageSelect}
-                  className="hidden"
-                  id="image-upload"
+              <Form {...form}>
+                <FormField
+                  control={form.control}
+                  name="image"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center justify-end">
+                      <FormLabel className="flex items-center gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => document.getElementById("image-upload")?.click()}
+                          className="flex items-center gap-2"
+                        >
+                          <Upload className="h-4 w-4" />
+                          画像を変更
+                        </Button>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageSelect}
+                          className="hidden"
+                          id="image-upload"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => document.getElementById("image-upload")?.click()}
-                  className="flex items-center gap-2"
-                >
-                  <Upload className="h-4 w-4" />
-                  画像を変更
-                </Button>
-              </div>
+              </Form>
             )}
           </div>
 
           {/* 詳細説明 */}
           {isEditMode ? (
-            <div className="space-y-2">
-              <Label htmlFor="description" className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                詳細
-              </Label>
-              <Textarea
-                id="description"
-                {...form.register("description")}
-                placeholder="作品名、シーン、エピソードなどを詳しく教えてください"
-                rows={4}
-                required
+            <Form {...form}>
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      詳細
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        placeholder="作品名、シーン、エピソードなどを詳しく教えてください"
+                        rows={4}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
+            </Form>
           ) : (
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
               {/* <p className="whitespace-pre-wrap">

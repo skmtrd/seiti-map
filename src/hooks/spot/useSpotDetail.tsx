@@ -5,7 +5,7 @@ import type { Spot } from "@/types/database";
 import useSWR from "swr";
 
 // SWR用のキー生成関数
-const createSpotDetailKey = (spotId: string) => {
+export const createSpotDetailKey = (spotId: string) => {
   const key = ["spotDetail", spotId];
   return JSON.stringify(key);
 };
