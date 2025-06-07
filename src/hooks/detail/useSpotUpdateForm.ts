@@ -2,11 +2,11 @@
 
 import { updateSpot } from "@/actions/spot";
 import type { Spot } from "@/types/database";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-export const useSpotUpdateForm = (spot: Spot) => {
+export const useSpotUpdateForm = (spot: Spot | null) => {
   interface formSchema {
     name: string;
     description: string;
@@ -27,11 +27,21 @@ export const useSpotUpdateForm = (spot: Spot) => {
 
   const form = useForm<formSchema>({
     defaultValues: {
-      name: spot.name,
-      description: spot.description || undefined,
+      name: spot?.name || "",
+      description: spot?.description || "",
       image: null,
     },
   });
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    if (spot) {
+      form.reset({
+        name: spot.name,
+        description: spot.description || undefined,
+      });
+    }
+  }, [spot]);
 
   const onSubmit = async (data: formSchema) => {
     try {
@@ -41,7 +51,7 @@ export const useSpotUpdateForm = (spot: Spot) => {
       if (selectedImage) {
         submissionFormData.set("image", selectedImage);
       }
-      const result = await updateSpot(spot.id, submissionFormData);
+      const result = await updateSpot(spot?.id || "", submissionFormData);
       if (result.success) toast.success("聖地の情報が更新されました！");
     } catch (error) {
       console.error("Error updating spot:", error);
@@ -64,8 +74,8 @@ export const useSpotUpdateForm = (spot: Spot) => {
   };
 
   return {
-    name: spot.name,
-    description: spot.description,
+    name: spot?.name || "",
+    description: spot?.description || "",
     form,
     handleEditButton,
     handleImageSelect,

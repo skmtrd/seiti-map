@@ -4,19 +4,18 @@ import { redirectToSignIn, signOut } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { usePreventScroll } from "@/hooks/common/usePreventScroll";
+import { useGetUser } from "@/hooks/user/useGetUser";
 import { LogOut, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-interface UserMenuProps {
-  userAuthenticated: boolean;
-}
-
-export const UserMenu: React.FC<UserMenuProps> = (props) => {
+export const UserMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const router = useRouter();
   const menuRef = useRef<HTMLDivElement>(null);
+  const { user, isLoading, isError, error, mutate } = useGetUser();
+  const userAuthenticated = user !== null;
 
   const preventScroll = usePreventScroll({
     wheel: true,
@@ -61,16 +60,20 @@ export const UserMenu: React.FC<UserMenuProps> = (props) => {
     }
   };
 
+  if (isLoading) {
+    return null;
+  }
+
   return (
     <div className="fixed top-4 right-4 z-50" ref={preventScroll}>
       {/* アバターボタン */}
 
-      {props.userAuthenticated ? (
+      {userAuthenticated ? (
         <Button onClick={() => setIsMenuOpen(!isMenuOpen)} size="icon" variant="default">
           <User className="text-white" />
         </Button>
       ) : (
-        <Button onClick={() => router.push("/sign-in")} variant="default">
+        <Button disabled={isLoading} onClick={() => router.push("/sign-in")} variant="default">
           サインイン
         </Button>
       )}

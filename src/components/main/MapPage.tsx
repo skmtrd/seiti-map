@@ -2,20 +2,14 @@
 
 import { useMemo } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { CreateSpotButton } from "@/components/main/CreateSpotButton";
-import { UserMenu } from "@/components/main/UserMenu";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGetUserLocation } from "@/hooks/main/getUserLocation";
 import { useSpotsWithQuery } from "@/hooks/spot/useSpots";
-import { AlertCircle, Loader2, MapPin, Navigation } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { MainMap } from "../main/MainMap";
 
-interface MapPageProps {
-  userAuthenticated: boolean;
-}
-
-export function MapPage(props: MapPageProps) {
+export function MapPage() {
   const { userLocation, locationError, isLoadingLocation } = useGetUserLocation();
   const { spots, isError, error, mutate } = useSpotsWithQuery();
 
@@ -63,9 +57,6 @@ export function MapPage(props: MapPageProps) {
     <div className="flex h-screen">
       {/* メインマップエリア */}
       <MainMap initialMapState={defaultViewState} userLocation={userLocation} spots={spots} />
-      {/* 浮遊配置系ボタン */}
-      <CreateSpotButton />
-      <UserMenu userAuthenticated={props.userAuthenticated} />
     </div>
   );
 }

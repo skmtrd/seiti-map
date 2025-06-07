@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { getWorks } from "@/actions/work";
 import { Toolbar } from "@/components/Toolbar/Toolbar";
+import { CreateSpotButton } from "@/components/main/CreateSpotButton";
+import { UserMenu } from "@/components/main/UserMenu";
 import { Suspense } from "react";
 
 const geistSans = Geist({
@@ -32,6 +34,9 @@ export default async function RootLayout({
         <Toolbar works={works} />
       </Suspense>
       <div className="flex-1">{children}</div>
+      {/* 浮遊配置系ボタン */}
+      <CreateSpotButton />
+      <UserMenu />
     </div>
   );
 }

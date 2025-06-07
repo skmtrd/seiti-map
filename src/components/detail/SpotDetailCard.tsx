@@ -3,19 +3,22 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { getGoogleMapsUrl } from "@/functions/formatter";
 import { useSpotUpdateForm } from "@/hooks/detail/useSpotUpdateForm";
-import type { Spot } from "@/types/database";
+import { useSpotDetail } from "@/hooks/spot/useSpotDetail";
+import { useGetUser } from "@/hooks/user/useGetUser";
 import { ExternalLink, FileText, Landmark, Upload, X } from "lucide-react";
 import Image from "next/image";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { Skeleton } from "../ui/skeleton";
 
 interface SpotDetailCardProps {
-  spot: Spot;
-  userAuthenticated: boolean;
+  spotId: string;
 }
 
-export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spot, userAuthenticated }) => {
+export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spotId }) => {
+  const { spot, isLoading, isError, error } = useSpotDetail(spotId);
   const {
     form,
     handleEditButton,
@@ -26,17 +29,10 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spot, userAuthen
     handleCancelButton,
   } = useSpotUpdateForm(spot);
 
-  const getGoogleMapsUrl = () => {
-    if (spot.latitude && spot.longitude) {
-      return `https://maps.google.com/?q=${spot.latitude},${spot.longitude}`;
-    }
-    if (spot.address) {
-      return `https://maps.google.com/?q=${encodeURIComponent(spot.address)}`;
-    }
-    return null;
-  };
+  const { user, isLoading: isUserLoading, isError: isUserError, error: userError } = useGetUser();
+  const userAuthenticated = user !== null;
 
-  const currentImageUrl = previewUrl || spot.image_url;
+  const currentImageUrl = previewUrl || spot?.image_url;
 
   return (
     <div className="space-y-6">
@@ -45,10 +41,10 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spot, userAuthen
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center w-full">
               {!isEditMode && (
-                <>
+                <div className="flex items-center gap-2">
                   <Landmark className="h-5 w-5" />
-                  {spot.name}
-                </>
+                  {isLoading && !spot ? <Skeleton className="h-5 w-[200px]" /> : spot?.name}
+                </div>
               )}
             </CardTitle>
 
@@ -74,8 +70,8 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spot, userAuthen
           {isEditMode && (
             <div className="space-y-2 w-full">
               <Label htmlFor="name" className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                スポット名
+                <Landmark className="h-4 w-4" />
+                聖地名
               </Label>
               <Input
                 id="name"
@@ -92,10 +88,12 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spot, userAuthen
         <CardContent className="space-y-6">
           {/* 画像 */}
           <div className="space-y-2">
-            {currentImageUrl ? (
+            {isLoading && !spot ? (
+              <Skeleton className="h-64 w-full" />
+            ) : currentImageUrl ? (
               <Image
                 src={currentImageUrl}
-                alt={spot.name}
+                alt={spot?.name || ""}
                 width={1200}
                 height={1200}
                 className="rounded-lg"
@@ -132,41 +130,57 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spot, userAuthen
           </div>
 
           {/* 詳細説明 */}
-          {spot.description && (
-            // biome-ignore lint/complexity/noUselessFragments: <explanation>
-            <>
-              {isEditMode ? (
+          {isEditMode ? (
+            <div className="space-y-2">
+              <Label htmlFor="description" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                詳細
+              </Label>
+              <Textarea
+                id="description"
+                {...form.register("description")}
+                placeholder="作品名、シーン、エピソードなどを詳しく教えてください"
+                rows={4}
+                required
+              />
+            </div>
+          ) : (
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              {/* <p className="whitespace-pre-wrap">
+                {isLoading && !spot ? <Skeleton className="h-5 w-[200px]" /> : spot?.description}
+              </p> */}
+              {isLoading && !spot ? (
                 <div className="space-y-2">
-                  <Label htmlFor="description" className="flex items-center gap-2">
-                    <FileText className="h-4 w-4" />
-                    詳細
-                  </Label>
-                  <Textarea
-                    id="description"
-                    {...form.register("description")}
-                    placeholder="作品名、シーン、エピソードなどを詳しく教えてください"
-                    rows={4}
-                    required
-                  />
+                  <Skeleton className="h-5 w-full" />
+                  <Skeleton className="h-5 w-full" />
                 </div>
               ) : (
-                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                  <p className="whitespace-pre-wrap">{spot.description}</p>
-                </div>
+                <p className="whitespace-pre-wrap">{spot?.description}</p>
               )}
-            </>
+            </div>
           )}
 
           {/* 埋め込みマップ */}
-          {(spot.latitude && spot.longitude) || spot.address ? (
+          {isLoading && !spot ? (
+            <div className="space-y-2">
+              <Card className="p-0">
+                <CardContent className="p-0">
+                  <Skeleton className="h-[300px] w-full rounded-t-lg" />
+                  <div className="p-4">
+                    <Skeleton className="h-10 w-full" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          ) : (spot?.latitude && spot?.longitude) || spot?.address ? (
             <div className="space-y-2">
               <Card className="p-0">
                 <CardContent className="p-0">
                   <iframe
                     src={`https://maps.google.com/maps?q=${
-                      spot.latitude && spot.longitude
-                        ? `${spot.latitude},${spot.longitude}`
-                        : encodeURIComponent(spot.address || "")
+                      spot?.latitude && spot?.longitude
+                        ? `${spot?.latitude},${spot?.longitude}`
+                        : encodeURIComponent(spot?.address || "")
                     }&t=&z=16&ie=UTF8&iwloc=&output=embed`}
                     width="100%"
                     height="300"
@@ -178,10 +192,20 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spot, userAuthen
                     className="rounded-t-lg"
                   />
                   <div className="p-4">
-                    {getGoogleMapsUrl() && (
+                    {getGoogleMapsUrl(
+                      spot?.latitude || 0,
+                      spot?.longitude || 0,
+                      spot?.address || ""
+                    ) && (
                       <Button asChild variant="default" className="w-full">
                         <a
-                          href={getGoogleMapsUrl() || "#"}
+                          href={
+                            getGoogleMapsUrl(
+                              spot?.latitude || 0,
+                              spot?.longitude || 0,
+                              spot?.address || ""
+                            ) || "#"
+                          }
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center justify-center gap-2"

@@ -10,14 +10,10 @@ export default async function SpotDetailPage({
   params: Promise<{ spotId: string }>;
 }) {
   const { spotId } = await params;
-
-  const spot = await getSpotDetail(spotId);
-  const user = await getUser();
-
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
       <Spacer height={10} />
-      <SpotDetailCard spot={spot} userAuthenticated={user !== null} />
+      <SpotDetailCard spotId={spotId} />
       <PageBackButton />
     </div>
   );
