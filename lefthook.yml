@@ -8,6 +8,8 @@ pre-commit:
     type-check:
       glob: "*.{ts,tsx}"
       run: npm run type-check
+    build:
+      run: npm run build
 
 pre-push:
   commands:
