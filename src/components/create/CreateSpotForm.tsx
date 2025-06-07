@@ -7,15 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { parseGoogleMapsUrl } from "@/functions";
+import { useWorks } from "@/hooks/work/getWorks";
 import type { Work } from "@/types/database";
 import { Camera, Check, FileText, Link, Loader2, MapPin, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type ChangeEvent, type FormEvent, useState } from "react";
 import { toast } from "sonner";
-
-interface CreateSpotFormProps {
-  works: Work[];
-}
 
 interface FormData {
   work_id: string;
@@ -28,7 +25,8 @@ interface FormData {
   image: File | null;
 }
 
-export function CreateSpotForm({ works }: CreateSpotFormProps) {
+export function CreateSpotForm() {
+  const { works, isLoading, isError, error, mutate } = useWorks();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [isNewWork, setIsNewWork] = useState(false);
