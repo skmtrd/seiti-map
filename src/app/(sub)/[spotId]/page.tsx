@@ -1,5 +1,3 @@
-import { getUser } from "@/actions/auth";
-import { getSpotDetail } from "@/actions/spot";
 import { PageBackButton } from "@/components/common/PageBackButton";
 import { Spacer } from "@/components/common/Spacer";
 import { SpotDetailCard } from "@/components/detail/SpotDetailCard";
@@ -14,7 +12,6 @@ export default async function SpotDetailPage({
     <div className="container mx-auto px-4 py-8 max-w-2xl">
       <Spacer height={10} />
       <SpotDetailCard spotId={spotId} />
-      <PageBackButton />
     </div>
   );
 }

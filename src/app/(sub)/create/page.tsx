@@ -1,6 +1,4 @@
 import { checkAuth } from "@/actions/auth";
-import { getWorks } from "@/actions/work";
-import { PageBackButton } from "@/components/common/PageBackButton";
 import { Spacer } from "@/components/common/Spacer";
 import { CreateSpotForm } from "@/components/create/CreateSpotForm";
 
@@ -12,7 +10,6 @@ export default async function CreatePage() {
       <Spacer height={10} />
       <h1 className="text-2xl font-bold mb-8">新しいスポットを投稿</h1>
       <CreateSpotForm />
-      <PageBackButton />
     </div>
   );
 }
