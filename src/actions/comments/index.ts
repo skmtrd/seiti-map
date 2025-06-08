@@ -12,25 +12,11 @@ interface GetCommentsOptions {
 /**
  * 指定されたスポットのコメント一覧を取得
  */
-export async function getComments(options: GetCommentsOptions): Promise<CommentWithUser[]> {
+export async function getComments(options: GetCommentsOptions): Promise<Comment[]> {
   try {
     const supabase = await createClient();
 
-    let query = supabase
-      .from("comments")
-      .select(`
-        *,
-        user_profiles (
-          display_name,
-          avatar_url
-        )
-      `)
-      .eq("spot_id", options.spotId);
-
-    // 制限
-    if (options.limit) {
-      query = query.limit(options.limit);
-    }
+    let query = supabase.from("comments").select("*").eq("spot_id", options.spotId);
 
     // 作成日時の降順でソート
     query = query.order("created_at", { ascending: false });

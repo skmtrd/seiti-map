@@ -1,10 +1,12 @@
 "use client";
 
 import { createComment } from "@/actions/comments";
+import { createCommentsKey } from "@/hooks/comment/useComments";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { mutate } from "swr";
 import z from "zod";
 
 export const useCommentUploadForm = (spotId: string) => {
@@ -48,6 +50,8 @@ export const useCommentUploadForm = (spotId: string) => {
 
       if (result.success) {
         toast.success("コメントを投稿しました");
+        form.reset();
+        mutate(createCommentsKey(spotId));
         router.push(`/${spotId}`);
       } else {
         toast.error(result.error || "コメントの投稿に失敗しました");
