@@ -8,6 +8,11 @@ const withPWA = require("next-pwa")({
 });
 
 const nextConfig = {
+  experimental: {
+    serverActions: {
+      bodySizeLimit: 1024 * 1024 * 1000, // 1GB
+    },
+  },
   images: {
     remotePatterns: [
       {
