@@ -1,5 +1,6 @@
 import { checkAuth } from "@/actions/auth";
 import { CreateCommentForm } from "@/components/comments/CreateCommentForm";
+import { PageBackButton } from "@/components/common/PageBackButton";
 import { Spacer } from "@/components/common/Spacer";
 
 export default async function CreatePage({
@@ -15,6 +16,7 @@ export default async function CreatePage({
       <Spacer height={10} />
       <h1 className="text-2xl font-bold mb-8">コメントを投稿</h1>
       <CreateCommentForm spotId={spotId} />
+      <PageBackButton />
     </div>
   );
 }

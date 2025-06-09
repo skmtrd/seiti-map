@@ -33,7 +33,6 @@ export function useSpots(options: GetSpotsOptions = {}) {
   const { data, error, isLoading, mutate } = useSWR(key, spotsWrapper, {
     revalidateOnFocus: false,
     revalidateOnReconnect: true,
-    dedupingInterval: 60000, // 1分間のデデュープ
   });
 
   return {

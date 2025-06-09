@@ -3,11 +3,15 @@
 import { Button } from "@/components/ui/button";
 import { usePreventScroll } from "@/hooks/common/usePreventScroll";
 import { MessageCircle } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export function CreateCommentButton() {
   const pathname = usePathname();
-  const spotId = pathname.split("/")[1];
+  const spotId = pathname.split("/")[2];
+
+  const searchParams = useSearchParams();
+  const lat = searchParams.get("lat");
+  const lng = searchParams.get("lng");
 
   const router = useRouter();
 
@@ -18,7 +22,7 @@ export function CreateCommentButton() {
   });
 
   const handleCreateSpot = () => {
-    router.push(`/${spotId}/comments`);
+    router.push(`/spot/${spotId}/comments/?lat=${lat}&lng=${lng}`);
   };
 
   return (

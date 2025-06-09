@@ -1,5 +1,6 @@
 import { PageBackButton } from "@/components/common/PageBackButton";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "聖地巡礼マップ",
@@ -14,7 +15,9 @@ export default async function RootLayout({
   return (
     <>
       {children}
-      <PageBackButton />
+      <Suspense>
+        <PageBackButton />
+      </Suspense>
     </>
   );
 }

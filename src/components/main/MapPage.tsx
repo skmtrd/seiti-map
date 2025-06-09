@@ -9,25 +9,31 @@ import { useSpotsWithQuery } from "@/hooks/spot/useSpots";
 import { AlertCircle } from "lucide-react";
 import { MainMap } from "../main/MainMap";
 
-export function MapPage() {
+interface MapPageProps {
+  lat: string;
+  lng: string;
+  openSpotId: string;
+}
+
+export const MapPage: React.FC<MapPageProps> = (props) => {
   const { userLocation, locationError, isLoadingLocation } = useGetUserLocation();
   const { spots, isError, error, mutate } = useSpotsWithQuery();
 
   // デフォルトの表示位置（現在位置があればそれを使用、なければ東京）
   const defaultViewState = useMemo(() => {
-    if (userLocation) {
+    if (props.lat && props.lng) {
       return {
-        longitude: userLocation.longitude,
-        latitude: userLocation.latitude,
-        zoom: 12,
+        longitude: Number.parseFloat(props.lng),
+        latitude: Number.parseFloat(props.lat),
+        zoom: 16,
       };
     }
     return {
-      longitude: 139.6917, // 東京の経度
-      latitude: 35.6895, // 東京の緯度
+      longitude: 139.6917,
+      latitude: 35.6895,
       zoom: 10,
     };
-  }, [userLocation]);
+  }, [props.lat, props.lng]);
 
   // エラー状態の表示
   if (isError) {
@@ -56,7 +62,12 @@ export function MapPage() {
   return (
     <div className="flex h-screen">
       {/* メインマップエリア */}
-      <MainMap initialMapState={defaultViewState} userLocation={userLocation} spots={spots} />
+      <MainMap
+        initialMapState={defaultViewState}
+        userLocation={userLocation}
+        spots={spots}
+        openSpotId={props.openSpotId}
+      />
     </div>
   );
-}
+};

@@ -7,6 +7,7 @@ pre-commit:
       stage_fixed: true
     type-check:
       glob: "*.{ts,tsx}"
+      stage_fixed: true
       run: npm run type-check
     build:
       run: npm run build

@@ -1,3 +1,4 @@
+import { PageBackButton } from "@/components/common/PageBackButton";
 import { Spacer } from "@/components/common/Spacer";
 import { SpotDetailCard } from "@/components/detail/SpotDetailCard";
 import { CommentsList } from "@/components/detail/commentsList";

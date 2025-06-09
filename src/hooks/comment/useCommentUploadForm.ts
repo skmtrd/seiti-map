@@ -3,7 +3,7 @@
 import { createComment } from "@/actions/comments";
 import { createCommentsKey } from "@/hooks/comment/useComments";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { mutate } from "swr";
@@ -18,6 +18,9 @@ export const useCommentUploadForm = (spotId: string) => {
   });
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const lat = searchParams.get("lat");
+  const lng = searchParams.get("lng");
 
   const handleImagesChange = (files: File[]) => {
     form.setValue("images", files);
@@ -52,7 +55,7 @@ export const useCommentUploadForm = (spotId: string) => {
         toast.success("コメントを投稿しました");
         form.reset();
         mutate(createCommentsKey(spotId));
-        router.push(`/${spotId}?tab=comment`);
+        router.push(`/spot/${spotId}?tab=comment&lat=${lat}&lng=${lng}`);
       } else {
         toast.error(result.error || "コメントの投稿に失敗しました");
       }

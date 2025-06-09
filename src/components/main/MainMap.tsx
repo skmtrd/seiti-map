@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Map as MapGL, Marker } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { SpotPopup } from "@/components/main/SpotPopup";
@@ -17,6 +17,7 @@ interface MainMapProps {
   };
   userLocation: UserLocation | null;
   spots: SpotWithWork[];
+  openSpotId: string;
 }
 
 export const MainMap: React.FC<MainMapProps> = (props) => {
@@ -32,6 +33,12 @@ export const MainMap: React.FC<MainMapProps> = (props) => {
     // 国土地理院ベクトルタイル（日本政府公式）
     // gsiJapan: "https://maps.gsi.go.jp/vector/style.json"
   };
+
+  useEffect(() => {
+    if (props.openSpotId) {
+      setSelectedSpot(props.spots.find((spot) => spot.id === props.openSpotId) || null);
+    }
+  }, [props.openSpotId, props.spots]);
 
   return (
     <div className="flex-1 relative">

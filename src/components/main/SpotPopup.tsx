@@ -168,7 +168,10 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
               variant="outline"
               className="w-full sm:w-1/2 flex items-center justify-center gap-2 text-base"
             >
-              <Link href={`/${selectedSpot.id}`} rel="noopener noreferrer">
+              <Link
+                href={`/spot/${selectedSpot.id}?lat=${selectedSpot.latitude}&lng=${selectedSpot.longitude}`}
+                rel="noopener noreferrer"
+              >
                 <span className="tracking-wide">詳細</span>
               </Link>
             </Button>
