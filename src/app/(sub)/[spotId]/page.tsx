@@ -2,6 +2,7 @@ import { Spacer } from "@/components/common/Spacer";
 import { SpotDetailCard } from "@/components/detail/SpotDetailCard";
 import { CommentsList } from "@/components/detail/commentsList";
 import { CreateCommentButton } from "@/components/detail/createCommentButton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default async function SpotDetailPage({
   params,
@@ -12,13 +13,20 @@ export default async function SpotDetailPage({
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
       <Spacer height={10} />
-      <SpotDetailCard spotId={spotId} />
-
       <CreateCommentButton />
-      <Spacer height={10} />
-      <h1 className="text-2xl font-bold">コメント一覧</h1>
-      <Spacer height={7} />
-      <CommentsList spotId={spotId} />
+      <Tabs defaultValue="detail">
+        <TabsList className="w-full">
+          <TabsTrigger value="detail">詳細</TabsTrigger>
+          <TabsTrigger value="comment">コメント</TabsTrigger>
+        </TabsList>
+        <Spacer height={5} />
+        <TabsContent value="detail">
+          <SpotDetailCard spotId={spotId} />
+        </TabsContent>
+        <TabsContent value="comment">
+          <CommentsList spotId={spotId} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
