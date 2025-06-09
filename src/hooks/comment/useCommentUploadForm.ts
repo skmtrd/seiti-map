@@ -52,7 +52,7 @@ export const useCommentUploadForm = (spotId: string) => {
         toast.success("コメントを投稿しました");
         form.reset();
         mutate(createCommentsKey(spotId));
-        router.push(`/${spotId}`);
+        router.push(`/${spotId}?tab=comment`);
       } else {
         toast.error(result.error || "コメントの投稿に失敗しました");
       }
