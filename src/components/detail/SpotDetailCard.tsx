@@ -8,7 +8,7 @@ import { useSpotUpdateForm } from "@/hooks/detail/useSpotUpdateForm";
 import { useSpotDetail } from "@/hooks/spot/useSpotDetail";
 import { useGetUser } from "@/hooks/user/useGetUser";
 import { ExternalLink, FileText, Landmark, Upload, X } from "lucide-react";
-import Image from "next/image";
+import { ImageEx } from "../common/ImageEx";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { Skeleton } from "../ui/skeleton";
@@ -89,12 +89,13 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spotId }) => {
             {isLoading && !spot ? (
               <Skeleton className="h-64 w-full" />
             ) : currentImageUrl ? (
-              <Image
+              <ImageEx
                 src={currentImageUrl}
                 alt={spot?.name || ""}
                 width={1200}
                 height={1200}
                 className="rounded-lg"
+                expandable={true}
               />
             ) : (
               <div className="h-64 w-full bg-gray-200 rounded-lg flex items-center justify-center">

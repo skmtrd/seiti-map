@@ -1,6 +1,7 @@
 import { formatDateTime } from "@/functions/formatter";
 import type { Comment } from "@/types/database";
 import Image from "next/image";
+import { ImageEx } from "../common/ImageEx";
 import { Spacer } from "../common/Spacer";
 import { Card, CardContent } from "../ui/card";
 
@@ -22,12 +23,13 @@ export const CommentCard: React.FC<CommentCardProps> = (props) => {
     if (images.length === 1) {
       return (
         <div className="w-full">
-          <Image
+          <ImageEx
             src={images[0]}
             alt="comment"
             width={600}
             height={400}
             className="w-full h-auto rounded-lg object-cover"
+            expandable={true}
           />
         </div>
       );
@@ -37,13 +39,14 @@ export const CommentCard: React.FC<CommentCardProps> = (props) => {
       return (
         <div className="grid grid-cols-2 gap-1">
           {images.map((src) => (
-            <Image
+            <ImageEx
               key={src}
               src={src}
               alt="comment"
               width={300}
               height={300}
               className="w-full h-48 rounded-lg object-cover"
+              expandable={true}
             />
           ))}
         </div>
@@ -53,27 +56,30 @@ export const CommentCard: React.FC<CommentCardProps> = (props) => {
     if (images.length === 3) {
       return (
         <div className="grid grid-cols-2 gap-1 h-96">
-          <Image
+          <ImageEx
             src={images[0]}
             alt="comment"
             width={300}
             height={400}
             className="w-full h-full rounded-lg object-cover"
+            expandable={true}
           />
           <div className="flex flex-col gap-1">
-            <Image
+            <ImageEx
               src={images[1]}
               alt="comment"
               width={300}
               height={200}
               className="w-full h-full rounded-lg object-cover"
+              expandable={true}
             />
-            <Image
+            <ImageEx
               src={images[2]}
               alt="comment"
               width={300}
               height={200}
               className="w-full h-full rounded-lg object-cover"
+              expandable={true}
             />
           </div>
         </div>
@@ -84,13 +90,14 @@ export const CommentCard: React.FC<CommentCardProps> = (props) => {
       return (
         <div className="grid grid-cols-2 gap-1">
           {images.map((src) => (
-            <Image
+            <ImageEx
               key={src}
               src={src}
               alt="comment"
               width={300}
               height={300}
               className="w-full h-48 rounded-lg object-cover"
+              expandable={true}
             />
           ))}
         </div>

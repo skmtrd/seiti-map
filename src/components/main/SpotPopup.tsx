@@ -9,6 +9,7 @@ import { Film, Landmark, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Popup } from "react-map-gl/maplibre";
+import { ImageEx } from "../common/ImageEx";
 import { Spacer } from "../common/Spacer";
 
 interface SpotPopupProps {
@@ -139,12 +140,13 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
             <>
               <Spacer height={4} />
               <div className="rounded-lg overflow-hidden">
-                <Image
+                <ImageEx
                   src={selectedSpot.image_url}
                   alt="投稿画像"
                   width={1200}
                   height={1200}
                   className="w-full"
+                  expandable={false}
                 />
               </div>
             </>
