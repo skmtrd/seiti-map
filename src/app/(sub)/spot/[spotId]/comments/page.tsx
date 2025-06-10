@@ -12,10 +12,11 @@ export default async function CreatePage({
   const { spotId } = await params;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <Spacer height={10} />
-      <h1 className="text-2xl font-bold mb-8">コメントを投稿</h1>
-      <CreateCommentForm spotId={spotId} />
+      <div className="w-full max-w-2xl">
+        <CreateCommentForm spotId={spotId} />
+      </div>
       <PageBackButton />
     </div>
   );
