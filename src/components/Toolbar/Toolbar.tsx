@@ -1,6 +1,6 @@
 "use client";
 
-import { WorkSelector } from "@/components/Toolbar/WorkSelector";
+import { MultiWorkSelector } from "@/components/Toolbar/MultiWorkSelector";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -23,7 +23,7 @@ export function Toolbar({ works }: { works: Work[] }) {
     <>
       <div className="hidden w-96 rounded-4xl p-4 md:block">
         <div className="flex items-center justify-between">
-          <WorkSelector works={works} />
+          <MultiWorkSelector works={works} />
         </div>
       </div>
       <Drawer>
@@ -46,7 +46,7 @@ export function Toolbar({ works }: { works: Work[] }) {
             </DrawerTitle>
           </DrawerHeader>
           <div className="w-full h-screen flex flex-col items-center px-4">
-            <WorkSelector works={works} />
+            <MultiWorkSelector works={works} />
           </div>
         </DrawerContent>
       </Drawer>

@@ -34,11 +34,11 @@ const animeWorks = [
   { id: 12, title: "AKIRA", type: "anime" },
 ];
 
-interface WorkSelectorProps {
+interface MultiWorkSelectorProps {
   works: Work[];
 }
 
-export const WorkSelector: React.FC<WorkSelectorProps> = (props) => {
+export const MultiWorkSelector: React.FC<MultiWorkSelectorProps> = (props) => {
   const [open, setOpen] = useState(false);
 
   // クエリパラメータで選択された作品IDを管理
