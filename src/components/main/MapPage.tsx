@@ -4,8 +4,8 @@ import { useMemo } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSpotsWithQuery } from "@/hooks/SWR/useSpots";
 import { useGetUserLocation } from "@/hooks/main/getUserLocation";
-import { useSpotsWithQuery } from "@/hooks/spot/useSpots";
 import { AlertCircle } from "lucide-react";
 import { MainMap } from "../main/MainMap";
 

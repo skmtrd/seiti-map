@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { mutate } from "swr";
 import z from "zod";
-import { createSpotDetailKey } from "../spot/useSpotDetail";
+import { createSpotDetailKey } from "../SWR/useSpotDetail";
 
 export const useSpotUpdateForm = (spot: Spot | null, spotId: string) => {
   const formSchema = z.object({

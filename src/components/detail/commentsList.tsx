@@ -1,7 +1,7 @@
 "use client";
 
 import { Spacer } from "@/components/common/Spacer";
-import { useComments } from "@/hooks/comment/useComments";
+import { useComments } from "@/hooks/SWR/useComments";
 import { CommentCard } from "./CommentCard";
 
 export const CommentsList = ({ spotId }: { spotId: string }) => {

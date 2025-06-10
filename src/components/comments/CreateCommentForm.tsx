@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { useCommentUploadForm } from "@/hooks/comment/useCommentUploadForm";
+import { useCommentUploadForm } from "@/hooks/form/useCommentUploadForm";
 import { MessageSquare, Send } from "lucide-react";
 interface CreateCommentFormProps {
   spotId: string;

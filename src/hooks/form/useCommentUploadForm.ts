@@ -1,7 +1,7 @@
 "use client";
 
 import { createComment } from "@/actions/comments";
-import { createCommentsKey } from "@/hooks/comment/useComments";
+import { createCommentsKey } from "@/hooks/SWR/useComments";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
