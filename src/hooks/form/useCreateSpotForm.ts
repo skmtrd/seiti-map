@@ -7,7 +7,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { mutate } from "swr";
 import z from "zod";
+import { createWorksKey } from "../SWR/getWorks";
 
 export const useCreateSpotForm = () => {
   const router = useRouter();
@@ -133,6 +135,7 @@ export const useCreateSpotForm = () => {
       if (result.success) {
         form.reset();
         toast.success("聖地が作成されました");
+        mutate(createWorksKey());
         router.push("/");
       } else {
         toast.error("聖地の作成に失敗しました");

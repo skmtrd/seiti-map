@@ -5,7 +5,7 @@ import type { Work } from "@/types/database";
 import useSWR from "swr";
 
 // SWR用のキー生成関数
-const createWorksKey = () => {
+export const createWorksKey = () => {
   const key = ["works"];
   return JSON.stringify(key);
 };
