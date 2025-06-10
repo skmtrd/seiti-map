@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import AnalyticsProvider from "@/components/common/AnalyticsProvider";
+import GoogleAnalytics from "@/components/common/GoogleAnalytics";
 import { Toaster } from "@/components/ui/sonner";
 import NextTopLoader from "nextjs-toploader";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
@@ -33,9 +35,12 @@ export default function RootLayout({
         <meta name="theme-color" content="#ffffff" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <GoogleAnalytics />
         <NextTopLoader />
         <Toaster position="top-center" />
-        <NuqsAdapter>{children}</NuqsAdapter>
+        <NuqsAdapter>
+          <AnalyticsProvider>{children}</AnalyticsProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

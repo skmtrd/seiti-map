@@ -98,6 +98,9 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
 # アプリケーション設定
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Google Analytics
+NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 ```
 
 ## 📁 プロジェクト構成
