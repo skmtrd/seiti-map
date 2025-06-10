@@ -3,10 +3,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { getGoogleMapsUrl } from "@/functions/formatter";
 import { usePreventScroll } from "@/hooks/common/usePreventScroll";
 import type { SpotWithWork } from "@/types/database";
 import { Film, Landmark, MapPin } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { Popup } from "react-map-gl/maplibre";
 import { ImageEx } from "../common/ImageEx";
@@ -79,17 +79,6 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
     }
   };
 
-  // Google MapsのURLを生成
-  const getGoogleMapsUrl = () => {
-    if (selectedSpot.latitude && selectedSpot.longitude) {
-      return `https://maps.google.com/?q=${selectedSpot.latitude},${selectedSpot.longitude}`;
-    }
-    if (selectedSpot.address) {
-      return `https://maps.google.com/?q=${encodeURIComponent(selectedSpot.address)}`;
-    }
-    return "https://maps.google.com";
-  };
-
   return (
     <Popup
       longitude={selectedSpot.longitude}
@@ -160,7 +149,15 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
               variant="default"
               className="w-full sm:w-1/2 flex items-center justify-center gap-2 text-base"
             >
-              <a href={getGoogleMapsUrl()} target="_blank" rel="noopener noreferrer">
+              <a
+                href={getGoogleMapsUrl(
+                  selectedSpot.latitude,
+                  selectedSpot.longitude,
+                  selectedSpot.address || ""
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <MapPin className="h-5 w-5 text-white drop-shadow-sm" />
                 <span className="tracking-wide">Google Map</span>
               </a>

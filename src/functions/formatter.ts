@@ -5,7 +5,7 @@ export const getGoogleMapsUrl = (latitude: number, longitude: number, address: s
   if (address) {
     return `https://maps.google.com/?q=${encodeURIComponent(address)}`;
   }
-  return null;
+  return undefined;
 };
 
 export const formatDateTime = (isoString: string) => {
