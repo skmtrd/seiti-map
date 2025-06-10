@@ -99,7 +99,7 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
       closeButton={false}
       closeOnClick={false}
       offset={[0, -10]}
-      style={{ zIndex: 1000 }}
+      style={{ zIndex: 10 }}
     >
       <Card
         ref={popupRef}

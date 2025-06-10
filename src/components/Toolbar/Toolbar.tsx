@@ -38,7 +38,7 @@ export function Toolbar({ works }: { works: Work[] }) {
             </Button>
           </div>
         </DrawerTrigger>
-        <DrawerContent>
+        <DrawerContent className="z-1000">
           <DrawerHeader>
             <DrawerTitle className="flex items-center gap-2">
               <Search className="h-6 w-6" />
