@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useWorks } from "@/hooks/SWR/getWorks";
 import { useCreateSpotForm } from "@/hooks/form/useCreateSpotForm";
-import { Link, Loader2, MapPin } from "lucide-react";
+import { Clipboard, ClipboardCheck, Link, Loader2, MapPin } from "lucide-react";
 import { useState } from "react";
 import { SingleWorkSelector } from "../common/SingleWorkSelector";
 import {
@@ -26,6 +26,19 @@ export function CreateSpotForm() {
   const { works, isLoading, isError, error, mutate } = useWorks();
 
   const { form, onSubmit, handleMapsUrlParse, handleImageSelect, states } = useCreateSpotForm();
+
+  const handleClipboardPaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) {
+        form.setValue("mapsUrl", text);
+        // ペースト後に自動で解析を実行
+        handleMapsUrlParse();
+      }
+    } catch (error) {
+      console.error("クリップボードの読み取りに失敗しました:", error);
+    }
+  };
 
   const getMapQuery = () => {
     const latitude = form.getValues("latitude");
@@ -164,33 +177,18 @@ export function CreateSpotForm() {
                 <Label htmlFor="mapsUrl" className="flex items-center gap-2">
                   <Link className="h-4 w-4" />
                   Google Maps URL *
-                  {states.isUrlParsing && (
-                    <span className="flex items-center gap-1 text-green-600 text-sm">
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                      解析中...
-                    </span>
-                  )}
                 </Label>
-                <div className="flex gap-2">
-                  {/* <Input
-                    id="mapsUrl"
-                    name="mapsUrl"
-                    value={states.googleMapsUrl}
-                    onChange={handleSetGoogleMapsUrl}
-                    placeholder="短縮URL: https://maps.app.goo.gl/xxx または 長いURL: https://www.google.com/maps/place/xxx"
-                    className="flex-1"
-                    required
-                  /> */}
+                <div className="w-full flex gap-2">
                   <FormField
                     control={form.control}
                     name="mapsUrl"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="flex-1">
                         <FormControl>
                           <Input
                             {...field}
                             placeholder="短縮URL: https://maps.app.goo.gl/xxx または 長いURL: https://www.google.com/maps/place/xxx"
-                            className="flex-1"
+                            className="w-full"
                           />
                         </FormControl>
                         <FormMessage />
@@ -200,24 +198,21 @@ export function CreateSpotForm() {
 
                   <Button
                     type="button"
-                    onClick={handleMapsUrlParse}
-                    disabled={!form.watch("mapsUrl")?.trim() || states.isUrlParsing}
-                    variant="outline"
+                    onClick={handleClipboardPaste}
+                    disabled={states.isUrlParsing}
+                    variant="default"
                     className="shrink-0"
+                    size="icon"
                   >
                     {states.isUrlParsing ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : states.urlParseStatus ? (
+                      <ClipboardCheck className="h-4 w-4" />
                     ) : (
-                      <>
-                        <Link className="mr-1 h-4 w-4" />
-                        URL解析
-                      </>
+                      <Clipboard className="h-4 w-4" />
                     )}
                   </Button>
                 </div>
-                {states.urlParseStatus && (
-                  <p className="text-blue-600 text-sm">{states.urlParseStatus}</p>
-                )}
                 {states.urlParseError && (
                   <p className="text-red-500 text-sm">{states.urlParseError}</p>
                 )}
