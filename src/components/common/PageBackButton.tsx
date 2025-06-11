@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { ChevronsLeft } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 export function PageBackButton() {
   const router = useRouter();
@@ -15,10 +16,14 @@ export function PageBackButton() {
   const lng = searchParams.get("lng");
   const spotId = pathname.split("/")[2];
 
+  const isAuthPage = pathname.includes("/sign");
+
   const handleClick = () => {
     if (isSpotPage) {
       router.push(`/?lat=${lat}&lng=${lng}&open=${spotId}`);
     } else if (isCreateSpotPage) {
+      router.push("/");
+    } else if (isAuthPage) {
       router.push("/");
     } else {
       router.back();
