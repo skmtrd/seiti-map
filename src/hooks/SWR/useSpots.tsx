@@ -12,6 +12,7 @@ interface GetSpotsOptions {
   search?: string;
   limit?: number;
   workIds?: string[]; // 作品IDの配列で絞り込み
+  workTypes?: string[]; // 作品タイプの配列で絞り込み
 }
 
 // SWR用のキー生成関数
@@ -55,7 +56,16 @@ export const useSpotsWithQuery = () => {
     return worksParam.split(",").filter((id) => id.trim().length > 0);
   }, [searchParams]);
 
-  const { spots, isError, error, mutate } = useSpots({ workIds: workIdsFromUrl });
+  const workTypesFromUrl = useMemo(() => {
+    const workTypesParam = searchParams.get("type");
+    if (!workTypesParam) return undefined;
+    return workTypesParam.split(",").filter((type) => type.trim().length > 0);
+  }, [searchParams]);
+
+  const { spots, isError, error, mutate } = useSpots({
+    workIds: workIdsFromUrl,
+    workTypes: workTypesFromUrl,
+  });
 
   return { spots, isError, error, mutate };
 };

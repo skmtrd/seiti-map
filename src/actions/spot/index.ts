@@ -12,13 +12,14 @@ interface GetSpotsOptions {
   search?: string;
   limit?: number;
   workIds?: string[]; // 作品IDの配列で絞り込み
+  workTypes?: string[]; // 作品タイプの配列で絞り込み
 }
 
 export async function getSpots(options: GetSpotsOptions = {}): Promise<SpotWithWork[]> {
   try {
     let query = supabase.from("spots").select(`
         *,
-        works (
+        works!inner (
           id,
           title,
           type,
@@ -27,19 +28,14 @@ export async function getSpots(options: GetSpotsOptions = {}): Promise<SpotWithW
         )
       `);
 
-    // 都道府県でフィルタ
-    if (options.prefecture) {
-      query = query.eq("prefecture", options.prefecture);
-    }
-
-    // 市でフィルタ
-    if (options.city) {
-      query = query.eq("city", options.city);
-    }
-
     // 作品IDでフィルタ（複数選択対応）
     if (options.workIds && options.workIds.length > 0) {
       query = query.in("work_id", options.workIds);
+    }
+
+    // 作品タイプでフィルタ（JOINしたworksテーブルのtypeカラムを使用）
+    if (options.workTypes && options.workTypes.length > 0) {
+      query = query.in("works.type", options.workTypes);
     }
 
     // 検索（名前または説明文で検索）
@@ -73,7 +69,7 @@ export async function getSpotDetail(spotId: string): Promise<Spot> {
   try {
     const { data, error } = await supabase
       .from("spots")
-      .select("*, works (id, title, type, description, release_year)")
+      .select("*, works!inner (id, title, type, description, release_year)")
       .eq("id", spotId)
       .single();
 
