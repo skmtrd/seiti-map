@@ -68,9 +68,9 @@ export const MultiWorkSelector: React.FC<MultiWorkSelectorProps> = (props) => {
   };
 
   return (
-    <div className="space-y-2 w-full">
+    <div className="w-full space-y-2">
       <div className="space-y-1">
-        <span className="text-sm font-bold">作品で絞り込む</span>
+        <span className="font-bold text-sm">作品で絞り込む</span>
       </div>
 
       <Popover open={open} onOpenChange={setOpen}>
@@ -112,7 +112,7 @@ export const MultiWorkSelector: React.FC<MultiWorkSelectorProps> = (props) => {
                     />
                     <div className="flex flex-col">
                       <span className="font-medium">{work.title}</span>
-                      <span className="text-xs text-muted-foreground">アニメ</span>
+                      <span className="text-muted-foreground text-xs">アニメ</span>
                     </div>
                   </CommandItem>
                 ))}
@@ -126,14 +126,14 @@ export const MultiWorkSelector: React.FC<MultiWorkSelectorProps> = (props) => {
       {selectedWorkIds.length > 0 && (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-700">
+            <span className="font-medium text-gray-700 text-sm">
               選択中の作品 ({selectedWorkIds.length})
             </span>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleClearAll}
-              className="h-auto p-1 text-xs text-gray-500 hover:text-gray-700"
+              className="h-auto p-1 text-gray-500 text-xs hover:text-gray-700"
             >
               すべて解除
             </Button>

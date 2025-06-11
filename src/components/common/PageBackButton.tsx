@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { ChevronsLeft } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
 
 export function PageBackButton() {
   const router = useRouter();

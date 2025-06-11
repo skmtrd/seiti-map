@@ -10,7 +10,6 @@ import { WORK_TYPE } from "@/constants";
 import { useWorks } from "@/hooks/SWR/getWorks";
 import { useCreateSpotForm } from "@/hooks/form/useCreateSpotForm";
 import { Clipboard, ClipboardCheck, Link, Loader2, MapPin } from "lucide-react";
-import { useState } from "react";
 import { SingleWorkSelector } from "../common/SingleWorkSelector";
 import {
   Form,
@@ -87,7 +86,7 @@ export function CreateSpotForm() {
 
               {/* 新規作品作成フィールド */}
               {states.isNewWork && (
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 space-y-6">
+                <div className="space-y-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
                   <FormField
                     control={form.control}
                     name="newWorkTitle"
@@ -177,7 +176,7 @@ export function CreateSpotForm() {
                   <Link className="h-4 w-4" />
                   Google Maps URL *
                 </Label>
-                <div className="w-full flex gap-2">
+                <div className="flex w-full gap-2">
                   <FormField
                     control={form.control}
                     name="mapsUrl"

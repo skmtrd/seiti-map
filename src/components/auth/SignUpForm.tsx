@@ -56,13 +56,13 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
       <div className={cn("flex flex-col gap-6", className)} {...props}>
         <Card>
           <CardHeader className="text-center">
-            <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle className="w-8 h-8 text-gray-600" />
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+              <CheckCircle className="h-8 w-8 text-gray-600" />
             </div>
             <CardTitle className="text-2xl">確認メールを送信しました</CardTitle>
             <CardDescription>アカウントを有効化するためにメールをご確認ください</CardDescription>
           </CardHeader>
-          <CardContent className="text-center space-y-6">
+          <CardContent className="space-y-6 text-center">
             <div className="space-y-3">
               <p className="text-gray-700">
                 <strong className="text-gray-900">{email}</strong> に確認メールを送信しました。
@@ -72,10 +72,10 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
               </p>
             </div>
 
-            <div className="bg-gray-50 p-4 rounded-lg text-left space-y-2">
+            <div className="space-y-2 rounded-lg bg-gray-50 p-4 text-left">
               <div className="flex items-start gap-2">
-                <Mail className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-gray-600 space-y-1">
+                <Mail className="mt-0.5 h-4 w-4 flex-shrink-0 text-gray-500" />
+                <div className="space-y-1 text-gray-600 text-sm">
                   <p>
                     • メールが届かない場合は<strong>迷惑メールフォルダ</strong>をご確認ください
                   </p>
@@ -87,8 +87,8 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                <p className="text-sm text-red-600">{error}</p>
+              <div className="rounded-lg border border-red-200 bg-red-50 p-3">
+                <p className="text-red-600 text-sm">{error}</p>
               </div>
             )}
 
@@ -149,7 +149,7 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
                   onChange={(e) => setRepeatPassword(e.target.value)}
                 />
               </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
+              {error && <p className="text-red-500 text-sm">{error}</p>}
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "アカウント作成中..." : "サインアップ"}
               </Button>

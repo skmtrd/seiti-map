@@ -82,65 +82,50 @@ export function ImageUpload({
 
   return (
     <div className={`space-y-3 ${className}`}>
-      <Label className="text-sm font-medium text-foreground">{label}</Label>
+      <Label className="font-medium text-foreground text-sm">{label}</Label>
 
       <div className="relative">
         <Card
-          className={`
-            border-2 border-dashed transition-all duration-200 ease-in-out overflow-hidden
-            ${
-              isDragOver
-                ? "border-primary bg-primary/5 shadow-md"
-                : imagePreview
-                  ? "border-border bg-background"
-                  : "border-muted-foreground/25 hover:border-muted-foreground/40 bg-muted/20"
-            }
+          className={`overflow-hidden border-2 border-dashed transition-all duration-200 ease-in-out ${
+            isDragOver
+              ? "border-primary bg-primary/5 shadow-md"
+              : imagePreview
+                ? "border-border bg-background"
+                : "border-muted-foreground/25 bg-muted/20 hover:border-muted-foreground/40"
+          }
           `}
         >
           <CardContent className="p-0">
             {imagePreview ? (
               <div className="space-y-0">
                 {/* 画像表示エリア */}
-                <div className="w-full h-64 bg-muted/20 flex items-center justify-center relative">
+                <div className="relative flex h-64 w-full items-center justify-center bg-muted/20">
                   <img
                     src={imagePreview || "/placeholder.svg"}
                     alt="プレビュー"
-                    className="max-w-full max-h-full object-contain"
+                    className="max-h-full max-w-full object-contain"
                   />
 
                   {/* 削除ボタン - 右上に常時表示 */}
                   <button
                     type="button"
                     onClick={removeImage}
-                    className="
-                      absolute top-3 right-3 
-                      w-8 h-8 rounded-full 
-                      bg-black/70 hover:bg-black/90 
-                      shadow-lg hover:shadow-xl
-                      flex items-center justify-center
-                      transition-all duration-200
-                      z-10 pointer-events-auto
-                    "
+                    className="pointer-events-auto absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/70 shadow-lg transition-all duration-200 hover:bg-black/90 hover:shadow-xl "
                     aria-label="画像を削除"
                   >
-                    <X className="w-4 h-4 text-white" />
+                    <X className="h-4 w-4 text-white" />
                   </button>
                 </div>
 
                 {/* アクションボタンエリア - 画像外に配置 */}
-                <div className="p-3 bg-background border-t flex justify-between items-center">
-                  <div className="text-sm text-muted-foreground">画像がアップロードされました</div>
+                <div className="flex items-center justify-between border-t bg-background p-3">
+                  <div className="text-muted-foreground text-sm">画像がアップロードされました</div>
                   <div className="flex gap-2">
                     <label
                       htmlFor="image-change-v3"
-                      className="
-                        inline-flex items-center gap-2 px-3 py-1.5 
-                        bg-black/70 hover:bg-black/90 
-                        text-white text-sm rounded-md
-                        cursor-pointer transition-colors
-                      "
+                      className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-black/70 px-3 py-1.5 text-sm text-white transition-colors hover:bg-black/90 "
                     >
-                      <RotateCcw className="w-4 h-4" />
+                      <RotateCcw className="h-4 w-4" />
                       変更
                     </label>
                     <Input
@@ -155,22 +140,18 @@ export function ImageUpload({
               </div>
             ) : (
               <div
-                className="
-                  p-8 text-center cursor-pointer
-                  transition-colors duration-200
-                  h-64 flex items-center justify-center
-                "
+                className="flex h-64 cursor-pointer items-center justify-center p-8 text-center transition-colors duration-200 "
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
               >
-                <label htmlFor="image-upload-v3" className="w-full h-full cursor-pointer">
+                <label htmlFor="image-upload-v3" className="h-full w-full cursor-pointer">
                   <div className="space-y-4">
-                    <div className="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center">
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted">
                       {isDragOver ? (
-                        <Upload className="w-8 h-8 text-primary animate-bounce" />
+                        <Upload className="h-8 w-8 animate-bounce text-primary" />
                       ) : (
-                        <ImageIcon className="w-8 h-8 text-muted-foreground" />
+                        <ImageIcon className="h-8 w-8 text-muted-foreground" />
                       )}
                     </div>
 
@@ -178,10 +159,10 @@ export function ImageUpload({
                       <p className="font-medium text-foreground">
                         {isDragOver ? "ここにドロップしてください" : placeholder}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         ドラッグ&ドロップまたはクリックして選択
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-muted-foreground text-xs">
                         PNG, JPG, GIF (最大 {maxSize}MB)
                       </p>
                     </div>

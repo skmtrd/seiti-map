@@ -145,10 +145,10 @@ export function MultiImageUpload({
 
   return (
     <div className={`space-y-3 ${className}`}>
-      <Label className="text-sm font-medium text-foreground flex items-center justify-between">
+      <Label className="flex items-center justify-between font-medium text-foreground text-sm">
         <span>{label}</span>
         {multiple && (
-          <span className="text-xs text-muted-foreground">
+          <span className="text-muted-foreground text-xs">
             {images.length} / {maxImages}
           </span>
         )}
@@ -156,9 +156,9 @@ export function MultiImageUpload({
 
       {/* 既存の画像表示 */}
       {images.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
           {images.map((image, index) => (
-            <Card key={image.id} className="relative group overflow-hidden">
+            <Card key={image.id} className="group relative overflow-hidden">
               <CardContent className="p-0">
                 <div className="relative aspect-square">
                   <Image
@@ -173,18 +173,10 @@ export function MultiImageUpload({
                   <button
                     type="button"
                     onClick={() => removeImage(image.id)}
-                    className="
-                      absolute top-2 right-2 
-                      w-6 h-6 rounded-full 
-                      bg-black/70 hover:bg-black/90 
-                      shadow-lg hover:shadow-xl
-                      flex items-center justify-center
-                      transition-all duration-200
-                      opacity-0 group-hover:opacity-100
-                    "
+                    className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-black/70 opacity-0 shadow-lg transition-all duration-200 hover:bg-black/90 hover:shadow-xl group-hover:opacity-100 "
                     aria-label="画像を削除"
                   >
-                    <X className="w-3 h-3 text-white" />
+                    <X className="h-3 w-3 text-white" />
                   </button>
                 </div>
               </CardContent>
@@ -196,50 +188,44 @@ export function MultiImageUpload({
       {/* アップロードエリア */}
       {canAddMore && (
         <Card
-          className={`
-            border-2 border-dashed transition-all duration-200 ease-in-out overflow-hidden
-            ${
-              isDragOver
-                ? "border-primary bg-primary/5 shadow-md"
-                : "border-muted-foreground/25 hover:border-muted-foreground/40 bg-muted/20"
-            }
+          className={`overflow-hidden border-2 border-dashed transition-all duration-200 ease-in-out ${
+            isDragOver
+              ? "border-primary bg-primary/5 shadow-md"
+              : "border-muted-foreground/25 bg-muted/20 hover:border-muted-foreground/40"
+          }
           `}
         >
           <CardContent className="p-0">
             <div
-              className="
-                p-8 cursor-pointer
-                transition-colors duration-200
-                h-32 flex items-center justify-center
-              "
+              className="flex h-32 cursor-pointer items-center justify-center p-8 transition-colors duration-200 "
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
             >
               <label
                 htmlFor="image-upload"
-                className="cursor-pointer flex items-center justify-center"
+                className="flex cursor-pointer items-center justify-center"
               >
                 <div className="flex flex-col items-center justify-center space-y-3 text-center">
-                  <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
                     {isDragOver ? (
-                      <Upload className="w-6 h-6 text-primary animate-bounce" />
+                      <Upload className="h-6 w-6 animate-bounce text-primary" />
                     ) : images.length > 0 ? (
-                      <Plus className="w-6 h-6 text-muted-foreground" />
+                      <Plus className="h-6 w-6 text-muted-foreground" />
                     ) : (
-                      <ImageIcon className="w-6 h-6 text-muted-foreground" />
+                      <ImageIcon className="h-6 w-6 text-muted-foreground" />
                     )}
                   </div>
 
                   <div className="space-y-1">
-                    <p className="text-sm font-medium text-foreground">
+                    <p className="font-medium text-foreground text-sm">
                       {isDragOver
                         ? "ここにドロップしてください"
                         : images.length > 0
                           ? "画像を追加"
                           : placeholder}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground text-xs">
                       {multiple ? `最大${maxImages}枚まで` : "1枚まで"} (最大 {maxSize}MB)
                     </p>
                   </div>

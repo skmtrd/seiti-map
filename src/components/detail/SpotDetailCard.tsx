@@ -7,7 +7,7 @@ import { getGoogleMapsUrl } from "@/functions/formatter";
 import { useGetUser } from "@/hooks/SWR/useGetUser";
 import { useSpotDetail } from "@/hooks/SWR/useSpotDetail";
 import { useSpotUpdateForm } from "@/hooks/form/useSpotUpdateForm";
-import { ExternalLink, FileText, Landmark, Upload, X } from "lucide-react";
+import { ExternalLink, Landmark, Upload, X } from "lucide-react";
 import { ImageEx } from "../common/ImageEx";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
@@ -32,7 +32,7 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spotId }) => {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center w-full">
+            <CardTitle className="flex w-full items-center">
               {!isEditMode && (
                 <div className="flex items-center gap-2">
                   <Landmark className="h-5 w-5" />
@@ -95,7 +95,7 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spotId }) => {
                 expandable={true}
               />
             ) : (
-              <div className="h-64 w-full bg-gray-200 rounded-lg flex items-center justify-center">
+              <div className="flex h-64 w-full items-center justify-center rounded-lg bg-gray-200">
                 <p className="text-gray-500">画像がまだありません</p>
               </div>
             )}
@@ -157,7 +157,7 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spotId }) => {
               />
             </Form>
           ) : (
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
               {/* <p className="whitespace-pre-wrap">
                 {isLoading && !spot ? <Skeleton className="h-5 w-[200px]" /> : spot?.description}
               </p> */}

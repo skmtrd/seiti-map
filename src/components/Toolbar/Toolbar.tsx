@@ -23,7 +23,7 @@ export function Toolbar({ works }: { works: Work[] }) {
   return (
     <>
       <div className="hidden w-96 rounded-4xl p-4 md:block">
-        <div className="flex items-center justify-between flex-col gap-4">
+        <div className="flex flex-col items-center justify-between gap-4">
           <WorkTypeSelector />
           <MultiWorkSelector works={works} />
         </div>
@@ -34,7 +34,7 @@ export function Toolbar({ works }: { works: Work[] }) {
             <Button
               size="icon"
               variant="default"
-              className="md:hidden fixed bottom-17 right-4 z-50"
+              className="fixed right-4 bottom-17 z-50 md:hidden"
             >
               <Search className="h-6 w-6" />
             </Button>
@@ -47,7 +47,7 @@ export function Toolbar({ works }: { works: Work[] }) {
               聖地を検索する
             </DrawerTitle>
           </DrawerHeader>
-          <div className="w-full h-screen flex flex-col items-center px-4 gap-4">
+          <div className="flex h-screen w-full flex-col items-center gap-4 px-4">
             <WorkTypeSelector />
             <MultiWorkSelector works={works} />
           </div>

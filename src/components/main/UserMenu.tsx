@@ -79,14 +79,14 @@ export const UserMenu = () => {
       )}
       {/* ドロップダウンメニュー */}
       {isMenuOpen && (
-        <Card className="absolute top-14 right-0 w-48 p-2 shadow-lg border">
+        <Card className="absolute top-14 right-0 w-48 border p-2 shadow-lg">
           <Button
             onClick={handleSignOut}
             disabled={isSigningOut}
             variant="ghost"
             className="w-full justify-start text-left hover:bg-red-50 hover:text-red-600"
           >
-            <LogOut className="h-4 w-4 mr-2" />
+            <LogOut className="mr-2 h-4 w-4" />
             {isSigningOut ? "サインアウト中..." : "サインアウト"}
           </Button>
         </Card>

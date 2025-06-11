@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import type { Comment, CommentInsert, CommentWithUser } from "@/types/database";
+import type { Comment, CommentInsert } from "@/types/database";
 import { revalidatePath } from "next/cache";
 
 interface GetCommentsOptions {

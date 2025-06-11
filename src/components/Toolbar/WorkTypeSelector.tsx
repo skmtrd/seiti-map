@@ -1,10 +1,7 @@
 "use client";
-
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { WORK_TYPE } from "@/constants";
 import { cn } from "@/lib/utils";
-import { X } from "lucide-react";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import type React from "react";
 
@@ -39,9 +36,9 @@ export const WorkTypeSelector: React.FC = () => {
   const selectedTypesData = WORK_TYPE.filter((workType) => selectedTypes.includes(workType.value));
 
   return (
-    <div className="space-y-3 w-full">
+    <div className="w-full space-y-3">
       <div className="space-y-1">
-        <span className="text-sm font-bold">作品タイプで絞り込む</span>
+        <span className="font-bold text-sm">作品タイプで絞り込む</span>
       </div>
 
       {/* Toggle Group - 縦2横4のレイアウト */}
@@ -53,7 +50,7 @@ export const WorkTypeSelector: React.FC = () => {
             size="sm"
             onClick={() => handleTypeToggle(workType.value)}
             className={cn(
-              "h-auto py-2 px-3 text-xs transition-all",
+              "h-auto px-3 py-2 text-xs transition-all",
               selectedTypes.includes(workType.value)
                 ? "bg-primary text-primary-foreground"
                 : "hover:bg-muted"

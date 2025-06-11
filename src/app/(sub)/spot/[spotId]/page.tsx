@@ -1,4 +1,3 @@
-import { PageBackButton } from "@/components/common/PageBackButton";
 import { Spacer } from "@/components/common/Spacer";
 import { SpotDetailCard } from "@/components/detail/SpotDetailCard";
 import { CommentsList } from "@/components/detail/commentsList";
@@ -16,7 +15,7 @@ export default async function SpotDetailPage({
   const { tab } = await searchParams;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
+    <div className="container mx-auto max-w-2xl px-4 py-8">
       <Spacer height={10} />
       <CreateCommentButton />
       <Tabs defaultValue={tab || "detail"}>

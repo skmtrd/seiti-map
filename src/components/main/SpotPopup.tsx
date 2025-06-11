@@ -92,7 +92,7 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
     >
       <Card
         ref={popupRef}
-        className="w-52 sm:w-96 border-0 shadow-xl select-none p-4 sm:p-6"
+        className="w-52 select-none border-0 p-4 shadow-xl sm:w-96 sm:p-6"
         style={{ touchAction: "none" }}
       >
         <CardHeader className="p-0">
@@ -107,17 +107,17 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
         <CardContent className="p-0">
           {/* 作品情報の表示 */}
           {selectedSpot.works && (
-            <div className="flex gap-2 flex-col">
+            <div className="flex flex-col gap-2">
               <Badge
                 variant="secondary"
                 className={`${getWorkTypeBadgeColor(selectedSpot.works.type)} text-xs`}
               >
                 {getWorkTypeLabel(selectedSpot.works.type)}
               </Badge>
-              <div className="p-2 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg">
+              <div className="rounded-lg bg-gradient-to-r from-indigo-50 to-purple-50 p-2">
                 <div className="flex items-center gap-2">
                   <Film className="h-4 w-4 text-indigo-600" />
-                  <span className="text-sm font-medium text-indigo-800">
+                  <span className="font-medium text-indigo-800 text-sm">
                     {selectedSpot.works.title}
                   </span>
                 </div>
@@ -128,7 +128,7 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
           {selectedSpot.image_url && (
             <>
               <Spacer height={4} />
-              <div className="rounded-lg overflow-hidden">
+              <div className="overflow-hidden rounded-lg">
                 <ImageEx
                   src={selectedSpot.image_url}
                   alt="投稿画像"
@@ -143,11 +143,11 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
         </CardContent>
 
         <CardFooter className="p-0">
-          <div className="w-full flex justify-center items-center flex-col sm:flex-row gap-2">
+          <div className="flex w-full flex-col items-center justify-center gap-2 sm:flex-row">
             <Button
               asChild
               variant="default"
-              className="w-full sm:w-1/2 flex items-center justify-center gap-2 text-base"
+              className="flex w-full items-center justify-center gap-2 text-base sm:w-1/2"
             >
               <a
                 href={getGoogleMapsUrl(
@@ -165,7 +165,7 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
             <Button
               asChild
               variant="outline"
-              className="w-full sm:w-1/2 flex items-center justify-center gap-2 text-base"
+              className="flex w-full items-center justify-center gap-2 text-base sm:w-1/2"
             >
               <Link
                 href={`/spot/${selectedSpot.id}?lat=${selectedSpot.latitude}&lng=${selectedSpot.longitude}`}

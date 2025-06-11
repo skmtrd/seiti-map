@@ -39,7 +39,7 @@ export const MapPage: React.FC<MapPageProps> = (props) => {
   if (isError) {
     return (
       <div className="flex h-screen">
-        <div className="flex-1 flex items-center justify-center bg-gray-50">
+        <div className="flex flex-1 items-center justify-center bg-gray-50">
           <Card className="w-96">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-red-600">
@@ -48,7 +48,7 @@ export const MapPage: React.FC<MapPageProps> = (props) => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600 mb-4">{error || "スポットの読み込みに失敗しました"}</p>
+              <p className="mb-4 text-gray-600">{error || "スポットの読み込みに失敗しました"}</p>
               <Button onClick={() => mutate()} variant="outline" className="w-full">
                 再試行
               </Button>

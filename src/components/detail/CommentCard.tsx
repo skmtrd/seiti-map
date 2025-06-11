@@ -1,6 +1,5 @@
 import { formatDateTime } from "@/functions/formatter";
 import type { Comment } from "@/types/database";
-import Image from "next/image";
 import { ImageEx } from "../common/ImageEx";
 import { Spacer } from "../common/Spacer";
 import { Card, CardContent } from "../ui/card";
@@ -28,7 +27,7 @@ export const CommentCard: React.FC<CommentCardProps> = (props) => {
             alt="comment"
             width={600}
             height={400}
-            className="w-full h-auto rounded-lg object-cover"
+            className="h-auto w-full rounded-lg object-cover"
             expandable={true}
           />
         </div>
@@ -45,7 +44,7 @@ export const CommentCard: React.FC<CommentCardProps> = (props) => {
               alt="comment"
               width={300}
               height={300}
-              className="w-full h-48 rounded-lg object-cover"
+              className="h-48 w-full rounded-lg object-cover"
               expandable={true}
             />
           ))}
@@ -55,13 +54,13 @@ export const CommentCard: React.FC<CommentCardProps> = (props) => {
 
     if (images.length === 3) {
       return (
-        <div className="grid grid-cols-2 gap-1 h-96">
+        <div className="grid h-96 grid-cols-2 gap-1">
           <ImageEx
             src={images[0]}
             alt="comment"
             width={300}
             height={400}
-            className="w-full h-full rounded-lg object-cover"
+            className="h-full w-full rounded-lg object-cover"
             expandable={true}
           />
           <div className="flex flex-col gap-1">
@@ -70,7 +69,7 @@ export const CommentCard: React.FC<CommentCardProps> = (props) => {
               alt="comment"
               width={300}
               height={200}
-              className="w-full h-full rounded-lg object-cover"
+              className="h-full w-full rounded-lg object-cover"
               expandable={true}
             />
             <ImageEx
@@ -78,7 +77,7 @@ export const CommentCard: React.FC<CommentCardProps> = (props) => {
               alt="comment"
               width={300}
               height={200}
-              className="w-full h-full rounded-lg object-cover"
+              className="h-full w-full rounded-lg object-cover"
               expandable={true}
             />
           </div>
@@ -96,7 +95,7 @@ export const CommentCard: React.FC<CommentCardProps> = (props) => {
               alt="comment"
               width={300}
               height={300}
-              className="w-full h-48 rounded-lg object-cover"
+              className="h-48 w-full rounded-lg object-cover"
               expandable={true}
             />
           ))}
@@ -109,7 +108,7 @@ export const CommentCard: React.FC<CommentCardProps> = (props) => {
     <Card className="flex flex-col">
       <CardContent className="flex flex-col">
         <div className="flex w-full justify-end">
-          <div className="text-sm text-gray-500">{formatDateTime(props.comment.created_at)}</div>
+          <div className="text-gray-500 text-sm">{formatDateTime(props.comment.created_at)}</div>
         </div>
         {props.comment.content}
         {renderImages() && <Spacer height={5} />}

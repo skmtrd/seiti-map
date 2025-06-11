@@ -13,7 +13,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import type { Work } from "@/types/database";
 import { Check, ChevronsUpDown } from "lucide-react";
-import type React from "react";
 import { useState } from "react";
 import type { ControllerRenderProps, FieldPath, FieldValues } from "react-hook-form";
 
@@ -107,7 +106,7 @@ export const SingleWorkSelector = <
                 />
                 <div className="flex flex-col">
                   <span className="font-medium">新規作成</span>
-                  <span className="text-xs text-muted-foreground">新規作品を作成</span>
+                  <span className="text-muted-foreground text-xs">新規作品を作成</span>
                 </div>
               </CommandItem>
               {worksData.map((work) => (
@@ -124,7 +123,7 @@ export const SingleWorkSelector = <
                   />
                   <div className="flex flex-col">
                     <span className="font-medium">{work.title}</span>
-                    <span className="text-xs text-muted-foreground">アニメ</span>
+                    <span className="text-muted-foreground text-xs">アニメ</span>
                   </div>
                 </CommandItem>
               ))}

@@ -48,7 +48,7 @@ function parseLongGoogleMapsUrl(url: string): ParseResult {
   try {
     // 場所名の抽出
     let placeName: string | undefined;
-    const placeMatch = url.match(/\/place\/([^\/]+)/);
+    const placeMatch = url.match(/\/place\/([^/]+)/);
     if (placeMatch) {
       placeName = decodeURIComponent(placeMatch[1].replace(/\+/g, " "));
     }

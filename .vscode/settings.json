@@ -3,5 +3,6 @@
         "iwloc",
         "maplibre",
         "toploader"
-    ]
+    ],
+    "editor.formatOnSave": true,
 }

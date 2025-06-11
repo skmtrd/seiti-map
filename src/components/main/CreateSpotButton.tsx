@@ -19,7 +19,7 @@ export function CreateSpotButton() {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50" ref={preventScroll}>
+    <div className="fixed right-4 bottom-4 z-50" ref={preventScroll}>
       <Button onClick={handleCreateSpot} size="lg" variant="default">
         <Landmark className="h-6 w-6" />
         聖地を登録

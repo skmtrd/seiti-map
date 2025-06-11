@@ -1,10 +1,10 @@
 "use client";
 
-import { createSpot, updateSpot } from "@/actions/spot";
+import { createSpot } from "@/actions/spot";
 import { parseGoogleMapsUrl } from "@/functions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { mutate } from "swr";

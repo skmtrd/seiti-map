@@ -41,7 +41,7 @@ export const MainMap: React.FC<MainMapProps> = (props) => {
   }, [props.openSpotId, props.spots]);
 
   return (
-    <div className="flex-1 relative">
+    <div className="relative flex-1">
       {/* Popup のデフォルトスタイルをオーバーライド */}
       <style>{`
     .maplibregl-popup-content {
@@ -75,8 +75,8 @@ export const MainMap: React.FC<MainMapProps> = (props) => {
           >
             <div className="relative">
               {/* メインの位置マーカー */}
-              <div className="flex flex-col items-center justify-center bg-white rounded-full w-8 h-8 shadow-lg border-2 border-blue-500">
-                <div className="w-3 h-3 bg-blue-500 rounded-full" />
+              <div className="flex h-8 w-8 flex-col items-center justify-center rounded-full border-2 border-blue-500 bg-white shadow-lg">
+                <div className="h-3 w-3 rounded-full bg-blue-500" />
               </div>
             </div>
           </Marker>
@@ -94,7 +94,7 @@ export const MainMap: React.FC<MainMapProps> = (props) => {
             <Button
               variant="default"
               size="sm"
-              className="bg-green-500 hover:bg-green-600 h-10 w-10 rounded-full border-2 border-white p-0 shadow-lg transition-all duration-200 hover:scale-110"
+              className="h-10 w-10 rounded-full border-2 border-white bg-green-500 p-0 shadow-lg transition-all duration-200 hover:scale-110 hover:bg-green-600"
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedSpot(spot);

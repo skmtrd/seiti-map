@@ -64,7 +64,7 @@ export function CreateCommentForm({ spotId }: CreateCommentFormProps) {
                 maxImages={4}
                 multiple={true}
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 現地の写真、比較画像、シーンの参考画像などを最大4枚まで追加できます
               </p>
             </div>
