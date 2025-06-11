@@ -69,8 +69,8 @@ export const UserMenu = () => {
       {/* アバターボタン */}
 
       {userAuthenticated ? (
-        <Button onClick={() => setIsMenuOpen(!isMenuOpen)} size="icon" variant="default">
-          <User className="text-white" />
+        <Button onClick={() => setIsMenuOpen(!isMenuOpen)} size="lgIcon" variant="default">
+          <User className="size-4" />
         </Button>
       ) : (
         <Button disabled={isLoading} onClick={() => router.push("/sign-in")} variant="default">

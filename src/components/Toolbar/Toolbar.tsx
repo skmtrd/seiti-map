@@ -2,7 +2,6 @@
 
 import { MultiWorkSelector } from "@/components/Toolbar/MultiWorkSelector";
 import { WorkTypeSelector } from "@/components/Toolbar/WorkTypeSelector";
-import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerContent,
@@ -13,6 +12,7 @@ import {
 import { usePreventScroll } from "@/hooks/common/usePreventScroll";
 import type { Work } from "@/types/database";
 import { Search } from "lucide-react";
+import { SearchDrawerOpenButton } from "./SearchDrawerOpenButton";
 
 export function Toolbar({ works }: { works: Work[] }) {
   const preventScroll = usePreventScroll({
@@ -31,13 +31,7 @@ export function Toolbar({ works }: { works: Work[] }) {
       <Drawer>
         <DrawerTrigger asChild>
           <div ref={preventScroll}>
-            <Button
-              size="icon"
-              variant="default"
-              className="fixed right-4 bottom-17 z-50 md:hidden"
-            >
-              <Search className="h-6 w-6" />
-            </Button>
+            <SearchDrawerOpenButton />
           </div>
         </DrawerTrigger>
         <DrawerContent>
