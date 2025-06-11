@@ -71,7 +71,7 @@ export type Database = {
         Row: {
           id: string;
           title: string;
-          type: "anime" | "drama" | "movie" | "game" | "novel" | "manga" | "other";
+          type: "anime" | "drama" | "movie" | "game" | "novel" | "manga" | "artists" | "other";
           description: string | null;
           release_year: number | null;
           created_by: string | null;
@@ -82,7 +82,7 @@ export type Database = {
         Insert: {
           id?: string;
           title: string;
-          type: "anime" | "drama" | "movie" | "game" | "novel" | "manga" | "other";
+          type: "anime" | "drama" | "movie" | "game" | "novel" | "manga" | "artists" | "other";
           description?: string | null;
           release_year?: number | null;
           created_by?: string | null;
@@ -93,7 +93,7 @@ export type Database = {
         Update: {
           id?: string;
           title?: string;
-          type?: "anime" | "drama" | "movie" | "game" | "novel" | "manga" | "other";
+          type?: "anime" | "drama" | "movie" | "game" | "novel" | "manga" | "artists" | "other";
           description?: string | null;
           release_year?: number | null;
           created_by?: string | null;
@@ -148,7 +148,7 @@ export type Database = {
       [_ in never]: never;
     };
     Enums: {
-      work_type: "anime" | "drama" | "movie" | "game" | "novel" | "manga" | "other";
+      work_type: "anime" | "drama" | "movie" | "game" | "novel" | "manga" | "artists" | "other";
     };
   };
 };

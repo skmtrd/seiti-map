@@ -3,7 +3,7 @@
 
 -- 作品タイプのENUM
 create type work_type as enum (
-  'anime', 'drama', 'movie', 'game', 'novel', 'manga', 'other'
+  'anime', 'drama', 'movie', 'game', 'novel', 'manga', 'artists', 'other'
 );
 
 -- 画像タイプのENUM（後で使用）

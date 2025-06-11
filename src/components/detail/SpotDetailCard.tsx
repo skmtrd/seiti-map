@@ -67,10 +67,7 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spotId }) => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2">
-                      <Landmark className="h-4 w-4" />
-                      聖地名
-                    </FormLabel>
+                    <FormLabel className="flex items-center gap-2">聖地名</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="例：神社の鳥居、学校の屋上、東京駅など" />
                     </FormControl>
@@ -146,10 +143,7 @@ export const SpotDetailCard: React.FC<SpotDetailCardProps> = ({ spotId }) => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2">
-                      <FileText className="h-4 w-4" />
-                      詳細
-                    </FormLabel>
+                    <FormLabel className="flex items-center gap-2">詳細</FormLabel>
                     <FormControl>
                       <Textarea
                         {...field}

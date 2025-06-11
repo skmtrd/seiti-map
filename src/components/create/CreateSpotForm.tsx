@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { WORK_TYPE } from "@/constants";
 import { useWorks } from "@/hooks/SWR/getWorks";
 import { useCreateSpotForm } from "@/hooks/form/useCreateSpotForm";
 import { Clipboard, ClipboardCheck, Link, Loader2, MapPin } from "lucide-react";
@@ -112,13 +113,11 @@ export function CreateSpotForm() {
                               <SelectValue placeholder="種類を選択してください" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="anime">アニメ</SelectItem>
-                              <SelectItem value="drama">ドラマ</SelectItem>
-                              <SelectItem value="movie">映画</SelectItem>
-                              <SelectItem value="game">ゲーム</SelectItem>
-                              <SelectItem value="novel">小説</SelectItem>
-                              <SelectItem value="manga">漫画</SelectItem>
-                              <SelectItem value="other">その他</SelectItem>
+                              {WORK_TYPE.map((workType) => (
+                                <SelectItem key={workType.value} value={workType.value}>
+                                  {workType.label}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         </FormControl>
