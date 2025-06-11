@@ -37,13 +37,15 @@ export const useCreateSpotForm = () => {
       if (result.success && result.coordinates) {
         const { latitude, longitude } = result.coordinates;
 
-        form.setValue("latitude", latitude.toString());
-        form.setValue("longitude", longitude.toString());
-        form.setValue("mapsUrl", form.watch("mapsUrl"));
+        form.setValue("latitude", latitude.toString(), { shouldValidate: true });
+        form.setValue("longitude", longitude.toString(), { shouldValidate: true });
+        form.setValue("mapsUrl", form.watch("mapsUrl"), { shouldValidate: true });
 
         if (result.address) {
-          form.setValue("address", result.address);
+          form.setValue("address", result.address, { shouldValidate: true });
         }
+        // フォーム全体のバリデーションを再実行
+        form.trigger();
 
         setShowMap(true);
         setUrlParseError(null);
@@ -67,8 +69,8 @@ export const useCreateSpotForm = () => {
     description: z.string().min(1, { message: "説明を入力してください" }),
     address: z.string().optional(),
     mapsUrl: z.string().min(1, { message: "Google MapsのURLを入力してください" }),
-    latitude: z.string().optional(),
-    longitude: z.string().optional(),
+    latitude: z.string(),
+    longitude: z.string(),
     image: z.instanceof(File).optional(),
     // 新規作品作成
     newWorkTitle: z.string().optional(),
@@ -99,14 +101,6 @@ export const useCreateSpotForm = () => {
       form.setValue("image", file);
     }
   };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      console.log(form.formState.isValid);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [form]);
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     console.log(data);

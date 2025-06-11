@@ -34,7 +34,7 @@ export function CreateSpotForm() {
       if (text) {
         form.setValue("mapsUrl", text);
         // ペースト後に自動で解析を実行
-        handleMapsUrlParse();
+        await handleMapsUrlParse();
       }
     } catch (error) {
       console.error("クリップボードの読み取りに失敗しました:", error);
