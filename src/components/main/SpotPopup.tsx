@@ -25,21 +25,6 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
     keyboard: false, // キーボードスクロールは許可
   });
 
-  // 難易度レベルに応じた色を取得
-  const getDifficultyBadgeColor = (level: number) => {
-    if (level <= 2) return "bg-green-100 text-green-800 hover:bg-green-200";
-    if (level <= 3) return "bg-yellow-100 text-yellow-800 hover:bg-yellow-200";
-    if (level <= 4) return "bg-orange-100 text-orange-800 hover:bg-orange-200";
-    return "bg-red-100 text-red-800 hover:bg-red-200";
-  };
-
-  const getDifficultyLabel = (level: number) => {
-    if (level <= 2) return "易しい";
-    if (level <= 3) return "普通";
-    if (level <= 4) return "難しい";
-    return "非常に難しい";
-  };
-
   // 作品タイプに応じた色を取得
   const getWorkTypeBadgeColor = (type: string) => {
     switch (type) {
