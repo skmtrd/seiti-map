@@ -18,22 +18,6 @@ import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import type React from "react";
 import { useState } from "react";
 
-// ダミーデータ
-const animeWorks = [
-  { id: 1, title: "君の名は。", type: "anime" },
-  { id: 2, title: "天気の子", type: "anime" },
-  { id: 3, title: "すずめの戸締まり", type: "anime" },
-  { id: 4, title: "千と千尋の神隠し", type: "anime" },
-  { id: 5, title: "となりのトトロ", type: "anime" },
-  { id: 6, title: "魔女の宅急便", type: "anime" },
-  { id: 7, title: "ハウルの動く城", type: "anime" },
-  { id: 8, title: "もののけ姫", type: "anime" },
-  { id: 9, title: "風の谷のナウシカ", type: "anime" },
-  { id: 10, title: "崖の上のポニョ", type: "anime" },
-  { id: 11, title: "攻殻機動隊", type: "anime" },
-  { id: 12, title: "AKIRA", type: "anime" },
-];
-
 interface MultiWorkSelectorProps {
   works: Work[];
 }
@@ -47,8 +31,18 @@ export const MultiWorkSelector: React.FC<MultiWorkSelectorProps> = (props) => {
     parseAsArrayOf(parseAsString).withDefault([])
   );
 
+  const [selectedWorkTypes, setSelectedWorkTypes] = useQueryState(
+    "type",
+    parseAsArrayOf(parseAsString).withDefault([])
+  );
+
+  const displayWorks =
+    selectedWorkTypes.length > 0
+      ? props.works.filter((work) => selectedWorkTypes.includes(work.type))
+      : props.works;
+
   // 選択された作品の情報を取得（propsからの作品データまたはダミーデータから）
-  const worksData = props.works.length > 0 ? props.works : animeWorks;
+  const worksData = props.works;
   const selectedWorksData = worksData.filter((work) =>
     selectedWorkIds.includes(work.id.toString())
   );
@@ -74,7 +68,7 @@ export const MultiWorkSelector: React.FC<MultiWorkSelectorProps> = (props) => {
   };
 
   return (
-    <div className="space-y-2 w-full max-w-md">
+    <div className="space-y-2 w-full">
       <div className="space-y-1">
         <span className="text-sm font-bold">作品で絞り込む</span>
       </div>
@@ -104,7 +98,7 @@ export const MultiWorkSelector: React.FC<MultiWorkSelectorProps> = (props) => {
             <CommandList>
               <CommandEmpty>作品が見つかりませんでした。</CommandEmpty>
               <CommandGroup>
-                {worksData.map((work) => (
+                {displayWorks.map((work) => (
                   <CommandItem
                     key={work.id}
                     value={work.title}

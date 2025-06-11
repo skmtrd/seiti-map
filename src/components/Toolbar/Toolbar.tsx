@@ -1,6 +1,7 @@
 "use client";
 
 import { MultiWorkSelector } from "@/components/Toolbar/MultiWorkSelector";
+import { WorkTypeSelector } from "@/components/Toolbar/WorkTypeSelector";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -22,7 +23,8 @@ export function Toolbar({ works }: { works: Work[] }) {
   return (
     <>
       <div className="hidden w-96 rounded-4xl p-4 md:block">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-col gap-4">
+          <WorkTypeSelector />
           <MultiWorkSelector works={works} />
         </div>
       </div>
@@ -38,14 +40,15 @@ export function Toolbar({ works }: { works: Work[] }) {
             </Button>
           </div>
         </DrawerTrigger>
-        <DrawerContent className="z-1000">
+        <DrawerContent>
           <DrawerHeader>
             <DrawerTitle className="flex items-center gap-2">
               <Search className="h-6 w-6" />
               聖地を検索する
             </DrawerTitle>
           </DrawerHeader>
-          <div className="w-full h-screen flex flex-col items-center px-4">
+          <div className="w-full h-screen flex flex-col items-center px-4 gap-4">
+            <WorkTypeSelector />
             <MultiWorkSelector works={works} />
           </div>
         </DrawerContent>

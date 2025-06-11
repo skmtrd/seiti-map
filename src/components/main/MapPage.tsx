@@ -18,7 +18,6 @@ interface MapPageProps {
 export const MapPage: React.FC<MapPageProps> = (props) => {
   const { userLocation, locationError, isLoadingLocation } = useGetUserLocation();
   const { spots, isError, error, mutate } = useSpotsWithQuery();
-  console.log(spots);
 
   // デフォルトの表示位置（現在位置があればそれを使用、なければ東京）
   const defaultViewState = useMemo(() => {
