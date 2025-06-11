@@ -17,13 +17,14 @@ export default async function RootLayout({
 }>) {
   const works = await getWorks();
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen overflow-hidden">
       <Suspense>
         <Toolbar works={works} />
         <div className="flex-1">{children}</div>
       </Suspense>
       {/* 浮遊配置系ボタン */}
       <CreateSpotButton />
+
       <UserMenu />
     </div>
   );

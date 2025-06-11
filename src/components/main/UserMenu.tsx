@@ -7,13 +7,12 @@ import { useGetUser } from "@/hooks/SWR/useGetUser";
 import { usePreventScroll } from "@/hooks/common/usePreventScroll";
 import { LogOut, User } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 export const UserMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const router = useRouter();
-  const menuRef = useRef<HTMLDivElement>(null);
   const { user, isLoading, isError, error, mutate } = useGetUser();
   const userAuthenticated = user !== null;
 
@@ -22,23 +21,6 @@ export const UserMenu = () => {
     touch: true,
     keyboard: false,
   });
-
-  // メニュー外クリックで閉じる
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    if (isMenuOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isMenuOpen]);
 
   const handleSignOut = async () => {
     setIsSigningOut(true);
@@ -60,10 +42,6 @@ export const UserMenu = () => {
     }
   };
 
-  if (isLoading) {
-    return null;
-  }
-
   return (
     <div className="fixed top-18 right-4 z-50" ref={preventScroll}>
       {/* アバターボタン */}
@@ -79,7 +57,7 @@ export const UserMenu = () => {
       )}
       {/* ドロップダウンメニュー */}
       {isMenuOpen && (
-        <Card className="absolute top-14 right-0 w-48 border p-2 shadow-lg">
+        <Card className="absolute top-14 right-0 w-48 border p-2 shadow-lg" ref={preventScroll}>
           <Button
             onClick={handleSignOut}
             disabled={isSigningOut}
