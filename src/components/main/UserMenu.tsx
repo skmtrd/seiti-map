@@ -65,7 +65,7 @@ export const UserMenu = () => {
   }
 
   return (
-    <div className="fixed top-4 right-4 z-50" ref={preventScroll}>
+    <div className="fixed top-18 right-4 z-50" ref={preventScroll}>
       {/* アバターボタン */}
 
       {userAuthenticated ? (

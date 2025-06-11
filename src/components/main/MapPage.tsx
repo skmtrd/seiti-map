@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useSpotsWithQuery } from "@/hooks/SWR/useSpots";
 import { useGetUserLocation } from "@/hooks/main/getUserLocation";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, List, MapIcon } from "lucide-react";
+import { IconTab } from "../common/IconTab";
 import { MainMap } from "../main/MainMap";
 
 interface MapPageProps {
@@ -18,6 +19,8 @@ interface MapPageProps {
 export const MapPage: React.FC<MapPageProps> = (props) => {
   const { userLocation, locationError, isLoadingLocation } = useGetUserLocation();
   const { spots, isError, error, mutate } = useSpotsWithQuery();
+
+  const [viewType, setViewType] = useState<"list" | "map">("map");
 
   // デフォルトの表示位置（現在位置があればそれを使用、なければ東京）
   const defaultViewState = useMemo(() => {
@@ -68,6 +71,16 @@ export const MapPage: React.FC<MapPageProps> = (props) => {
         spots={spots}
         openSpotId={props.openSpotId}
       />
+      <div className="fixed top-4 right-4 z-50">
+        <IconTab
+          options={[
+            { value: "list", icon: <List /> },
+            { value: "map", icon: <MapIcon /> },
+          ]}
+          onChange={(value) => setViewType(value as "list" | "map")}
+          currentValue={viewType}
+        />
+      </div>
     </div>
   );
 };
