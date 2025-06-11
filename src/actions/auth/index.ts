@@ -34,7 +34,7 @@ export async function signUp(
       email,
       password,
       options: {
-        emailRedirectTo: `${origin}/sign-in`,
+        emailRedirectTo: `${origin}/auth`,
       },
     });
 
@@ -149,7 +149,7 @@ export async function redirectToHome() {
 
 // リダイレクト専用のServer Action（サインアウト後用）
 export async function redirectToSignIn() {
-  redirect("/sign-in");
+  redirect("/auth");
 }
 
 // 認証チェック用のServer Action
@@ -162,7 +162,7 @@ export async function checkAuth() {
 
   // ログインしていない場合はサインインページにリダイレクト
   if (authError || !user) {
-    redirect("/sign-in");
+    redirect("/auth");
   }
 
   return user;

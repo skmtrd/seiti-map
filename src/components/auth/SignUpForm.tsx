@@ -10,7 +10,11 @@ import { CheckCircle, Mail } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
+interface SignUpFormProps extends React.ComponentPropsWithoutRef<"div"> {
+  onSwitchToSignIn?: () => void;
+}
+
+export function SignUpForm({ className, onSwitchToSignIn, ...props }: SignUpFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
@@ -93,9 +97,15 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
             )}
 
             <div className="space-y-3">
-              <Button variant="default" asChild className="w-full">
-                <Link href="/sign-in">ログインページに戻る</Link>
-              </Button>
+              {onSwitchToSignIn ? (
+                <Button variant="default" className="w-full" onClick={onSwitchToSignIn}>
+                  ログインページに戻る
+                </Button>
+              ) : (
+                <Button variant="default" asChild className="w-full">
+                  <Link href="/sign-in">ログインページに戻る</Link>
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -156,9 +166,19 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
             </div>
             <div className="mt-4 text-center text-sm">
               すでにアカウントをお持ちの場合は{" "}
-              <Link href="/sign-in" className="underline underline-offset-4">
-                ログイン
-              </Link>
+              {onSwitchToSignIn ? (
+                <button
+                  type="button"
+                  onClick={onSwitchToSignIn}
+                  className="underline underline-offset-4 hover:text-primary"
+                >
+                  ログイン
+                </button>
+              ) : (
+                <Link href="/sign-in" className="underline underline-offset-4">
+                  ログイン
+                </Link>
+              )}
             </div>
           </form>
         </CardContent>

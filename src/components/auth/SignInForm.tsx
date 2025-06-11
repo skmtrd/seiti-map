@@ -9,7 +9,11 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useState } from "react";
 
-export function SignInForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
+interface SignInFormProps extends React.ComponentPropsWithoutRef<"div"> {
+  onSwitchToSignUp?: () => void;
+}
+
+export function SignInForm({ className, onSwitchToSignUp, ...props }: SignInFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -93,9 +97,19 @@ export function SignInForm({ className, ...props }: React.ComponentPropsWithoutR
             </div>
             <div className="mt-4 text-center text-sm">
               アカウントをお持ちでない場合は{" "}
-              <Link href="/sign-up" className="underline underline-offset-4">
-                サインアップ
-              </Link>
+              {onSwitchToSignUp ? (
+                <button
+                  type="button"
+                  onClick={onSwitchToSignUp}
+                  className="underline underline-offset-4 hover:text-primary"
+                >
+                  サインアップ
+                </button>
+              ) : (
+                <Link href="/sign-up" className="underline underline-offset-4">
+                  サインアップ
+                </Link>
+              )}
             </div>
           </form>
         </CardContent>

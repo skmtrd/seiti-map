@@ -51,7 +51,7 @@ export const UserMenu = () => {
           <User className="size-4" />
         </Button>
       ) : (
-        <Button disabled={isLoading} onClick={() => router.push("/sign-in")} variant="default">
+        <Button disabled={isLoading} onClick={() => router.push("/auth")} variant="default">
           サインイン
         </Button>
       )}
