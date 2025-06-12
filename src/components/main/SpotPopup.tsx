@@ -6,7 +6,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { getGoogleMapsUrl } from "@/functions/formatter";
 import { usePreventScroll } from "@/hooks/common/usePreventScroll";
 import type { SpotWithWork } from "@/types/database";
-import { Film, Landmark, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import Link from "next/link";
 import { Popup } from "react-map-gl/maplibre";
 import { ImageEx } from "../common/ImageEx";
@@ -38,7 +38,7 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
         return "bg-red-100 text-red-800 hover:bg-red-200";
       case "novel":
         return "bg-orange-100 text-orange-800 hover:bg-orange-200";
-      case "live_action":
+      case "artists":
         return "bg-gray-100 text-gray-800 hover:bg-gray-200";
       default:
         return "bg-gray-100 text-gray-800 hover:bg-gray-200";
@@ -57,8 +57,8 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
         return "映画";
       case "novel":
         return "小説";
-      case "live_action":
-        return "実写";
+      case "artists":
+        return "アーティスト";
       default:
         return type;
     }
@@ -82,7 +82,6 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
       >
         <CardHeader className="p-0">
           <div className="flex items-center gap-2">
-            <Landmark className="h-5 w-5" />
             <CardTitle className="font-bold text-gray-900 text-sm sm:text-lg">
               {selectedSpot.name}
             </CardTitle>
@@ -101,7 +100,6 @@ export function SpotPopup({ selectedSpot, onClose }: SpotPopupProps) {
               </Badge>
               <div className="rounded-lg bg-gradient-to-r from-indigo-50 to-purple-50 p-2">
                 <div className="flex items-center gap-2">
-                  <Film className="h-4 w-4 text-indigo-600" />
                   <span className="font-medium text-indigo-800 text-sm">
                     {selectedSpot.works.title}
                   </span>
