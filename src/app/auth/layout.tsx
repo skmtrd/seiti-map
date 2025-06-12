@@ -13,11 +13,9 @@ export default async function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
+    <Suspense>
       {children}
-      <Suspense>
-        <PageBackButton />
-      </Suspense>
-    </>
+      <PageBackButton />
+    </Suspense>
   );
 }

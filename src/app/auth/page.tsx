@@ -4,13 +4,15 @@ import { SignInForm } from "@/components/auth/SignInForm";
 import { SignUpForm } from "@/components/auth/SignUpForm";
 import { IconTab } from "@/components/common/IconTab";
 import { LogIn, UserPlus } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 type AuthMode = "signin" | "signup";
 
 export default function AuthPage() {
-  const [mode, setMode] = useState<AuthMode>("signin");
-
+  const searchParams = useSearchParams();
+  const mode = searchParams.get("mode") as AuthMode;
+  const [currentMode, setCurrentMode] = useState<AuthMode>(mode || "signin");
   const tabOptions = [
     {
       value: "signin",
@@ -29,8 +31,8 @@ export default function AuthPage() {
         <div className="mb-3 flex w-full justify-end">
           <IconTab
             options={tabOptions}
-            currentValue={mode}
-            onChange={(value) => setMode(value as AuthMode)}
+            currentValue={currentMode}
+            onChange={(value) => setCurrentMode(value as AuthMode)}
           />
         </div>
 
@@ -39,24 +41,24 @@ export default function AuthPage() {
           <div
             className="flex transition-transform duration-500 ease-in-out"
             style={{
-              transform: `translateX(${mode === "signin" ? "0%" : "-100%"})`,
+              transform: `translateX(${currentMode === "signin" ? "0%" : "-100%"})`,
             }}
           >
             {/* SignIn Form */}
             <div className="w-full flex-shrink-0">
               <div
-                className={`transition-opacity duration-300 ${mode === "signin" ? "opacity-100" : "opacity-0"}`}
+                className={`transition-opacity duration-300 ${currentMode === "signin" ? "opacity-100" : "opacity-0"}`}
               >
-                <SignInForm onSwitchToSignUp={() => setMode("signup")} />
+                <SignInForm onSwitchToSignUp={() => setCurrentMode("signup")} />
               </div>
             </div>
 
             {/* SignUp Form */}
             <div className="w-full flex-shrink-0">
               <div
-                className={`transition-opacity duration-300 ${mode === "signup" ? "opacity-100" : "opacity-0"}`}
+                className={`transition-opacity duration-300 ${currentMode === "signup" ? "opacity-100" : "opacity-0"}`}
               >
-                <SignUpForm onSwitchToSignIn={() => setMode("signin")} />
+                <SignUpForm onSwitchToSignIn={() => setCurrentMode("signin")} />
               </div>
             </div>
           </div>
