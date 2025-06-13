@@ -12,7 +12,7 @@ interface ImageUploadProps {
   onImageChange?: (file: File | null) => void;
   label?: string;
   placeholder?: string;
-  maxSize?: number; // MB
+  maxSize?: number;
   className?: string;
 }
 
