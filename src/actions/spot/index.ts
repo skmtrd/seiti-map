@@ -198,7 +198,7 @@ export async function updateSpot(
     // スポットデータを更新
     const updateData = {
       name: name.trim(),
-      description: description?.trim() || null,
+      description: description?.trim() || "",
       image_url: imageUrl,
       updated_at: new Date().toISOString(),
     };
@@ -262,7 +262,7 @@ export async function createSpot(
     const imageFile = formData.get("image") as File | null;
 
     // 入力検証
-    if (!workId || !name || !description || Number.isNaN(latitude) || Number.isNaN(longitude)) {
+    if (!workId || !name || Number.isNaN(latitude) || Number.isNaN(longitude)) {
       return { success: false, error: "必須項目が不足しています" };
     }
 

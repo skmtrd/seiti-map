@@ -13,7 +13,7 @@ import { createSpotDetailKey } from "../SWR/useSpotDetail";
 export const useSpotUpdateForm = (spot: Spot | null, spotId: string) => {
   const formSchema = z.object({
     name: z.string().min(1, { message: "聖地名を入力してください" }),
-    description: z.string().min(1, { message: "説明を入力してください" }),
+    description: z.string().optional(),
     image: z.instanceof(File).optional(),
   });
   const [isEditMode, setIsEditMode] = useState(false);

@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { createUserKey } from "@/hooks/SWR/useGetUser";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useState } from "react";
+import { mutate } from "swr";
 
 interface SignInFormProps extends React.ComponentPropsWithoutRef<"div"> {
   onSwitchToSignUp?: () => void;
@@ -46,6 +48,7 @@ export function SignInForm({ className, onSwitchToSignUp, ...props }: SignInForm
       setError("サインインに失敗しました");
     } finally {
       setIsLoading(false);
+      mutate(createUserKey());
     }
   };
 

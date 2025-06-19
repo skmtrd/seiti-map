@@ -4,7 +4,7 @@ import { getUser } from "@/actions/auth";
 import useSWR from "swr";
 
 // SWR用のキー生成関数
-const createUserKey = () => {
+export const createUserKey = () => {
   const key = ["user"];
   return JSON.stringify(key);
 };

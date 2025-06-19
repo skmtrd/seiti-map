@@ -66,7 +66,7 @@ export const useCreateSpotForm = () => {
   const formSchema = z.object({
     workId: z.string().min(1, { message: "作品を選択してください" }),
     name: z.string().min(1, { message: "聖地名を入力してください" }),
-    description: z.string().min(1, { message: "説明を入力してください" }),
+    description: z.string().optional(),
     address: z.string().optional(),
     mapsUrl: z.string().min(1, { message: "Google MapsのURLを入力してください" }),
     latitude: z.string(),
@@ -111,7 +111,7 @@ export const useCreateSpotForm = () => {
       // FormDataにStateの値を追加
       submissionFormData.set("work_id", data.workId);
       submissionFormData.set("name", data.name);
-      submissionFormData.set("description", data.description);
+      submissionFormData.set("description", data.description || "");
       submissionFormData.set("latitude", data.latitude || "");
       submissionFormData.set("longitude", data.longitude || "");
       submissionFormData.set("address", data.address || "");
