@@ -27,11 +27,20 @@ export const MainMap: React.FC<MainMapProps> = (props) => {
     // OpenStreetMap Japan（無料・完全日本語対応）
     osmJapan: "https://tile.openstreetmap.jp/styles/osm-bright-ja/style.json",
 
+    // OpenStreetMap 英語版（無料）
+    osmBrightEn: "https://tile.openstreetmap.jp/styles/osm-bright-en/style.json",
+
+    // OpenStreetMap トナー（モノクロ・無料）
+    osmToner: "https://tile.openstreetmap.jp/styles/maptiler-toner-ja/style.json",
+
+    // OpenStreetMap ベーシック（シンプル・無料）
+    osmBasic: "https://tile.openstreetmap.jp/styles/maptiler-basic-ja/style.json",
+
     // MapTiler（APIキー必要・多言語対応）
     // mapTilerJa: "https://api.maptiler.com/maps/streets/style.json?key=YOUR_API_KEY&language=ja",
 
-    // 国土地理院ベクトルタイル（日本政府公式）
-    // gsiJapan: "https://maps.gsi.go.jp/vector/style.json"
+    // Protomaps（無料・オープンソース）
+    protomapsLight: "https://api.protomaps.com/styles/v2/light.json",
   };
 
   useEffect(() => {
